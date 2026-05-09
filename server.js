@@ -4,7 +4,8 @@ const fs = require('fs');
 const multer = require('multer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const Database = require('better-sqlite3');
+// const Database = require('better-sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
