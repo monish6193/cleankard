@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CleanCo Admin</title>
+  <style>
+    :root{--accent:#1e5c3f}
+    body{font-family:Inter,system-ui,Arial,Helvetica,sans-serif;margin:0;background:#f7faf7;color:#0b1a17}
+    .app{display:flex;min-height:100vh}
+    .sidebar{width:220px;background:#ffffff;border-right:1px solid #e6e6e6;padding:18px 12px}
+    .sidebar h3{margin:0 0 12px 6px;font-size:1rem;color:var(--accent)}
+    .menu{display:flex;flex-direction:column;gap:6px}
+    .menu button{background:transparent;border:none;text-align:left;padding:10px 12px;border-radius:6px;cursor:pointer;font-weight:600;color:#153426}
+    .menu button.active{background:rgba(30,92,63,0.08);color:var(--accent)}
+    .main{flex:1;padding:20px}
+    .panel{display:none;background:#fff;padding:18px;border-radius:10px;border:1px solid #e6e6e6;max-width:980px}
+    .panel.active{display:block}
+    label{display:block;margin-top:10px;font-weight:600}
+    input[type=text], input[type=number], textarea, select{width:100%;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:6px}
+    .img-preview{height:150px;object-fit:contain;border:1px dashed #ccc;padding:6px;margin-top:8px;background:#fff}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .controls{margin-top:12px}
+    .btn{padding:10px 14px;border:none;background:var(--accent);color:#fff;border-radius:6px;cursor:pointer}
+    .btn.ghost{background:#fff;color:var(--accent);border:1px solid #ddd}
+    .meta{font-size:.9rem;color:#555;margin-top:8px}
+    .small{font-size:.9rem;color:#555}
+    .product-list{margin-top:12px;border-top:1px solid #eee;padding-top:12px}
+    .product-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px dashed #f1f1f1}
+    .product-item img{width:64px;height:56px;object-fit:cover;border-radius:6px}
+    .msg-list{margin-top:12px}
+    .msg-item{border:1px solid #eee;padding:10px;border-radius:6px;margin-bottom:8px}
+    .warn{color:#a44}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h3>Admin Panel</h3>
+      <nav class="menu" id="menu">
+        <button data-panel="hero" class="active">Hero Banner</button>
+        <button data-panel="about">About Us</button>
+        <button data-panel="products">Products</button>
+        <button data-panel="contact">Contact</button>
+      </nav>
+      <div style="margin-top:18px;font-size:.9rem;color:#666">Local demo admin — data stored in browser only.</div>
+    </aside>
+
+    <main class="main">
+      <!-- HERO -->
+      <section id="panel-hero" class="panel active">
+        <h2>Hero Banner</h2>
+        <div class="small">Upload a banner image (stored locally). Recommended max: 500KB. Large files may fail to save.</div>
+        <label>Banner Image
+          <input id="heroImage" type="file" accept="image/*" />
+          <img id="heroPreview" class="img-preview" alt="Hero preview" />
+          <div id="heroSize" class="meta"></div>
+        </label>
+        <label style="margin-top:10px"><input id="hideHeroContent" type="checkbox"/> Hide hero text/buttons on site</label>
+        <div class="controls">
+          <button id="saveHero" class="btn">Save Banner</button>
+          <button id="clearHero" class="btn ghost">Clear Hero</button>
+          <div id="heroMsg" class="meta" style="display:none;color:green"></div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="panel-about" class="panel">
+        <h2>About Us</h2>
+        <div class="row">
+          <div class="col">
+            <label>About Text
+              <textarea id="aboutText" rows="6" placeholder="About us content"></textarea>
+            </label>
+            <div class="controls">
+              <button id="saveAbout" class="btn">Save About</button>
+              <button id="clearAbout" class="btn ghost">Clear About</button>
+              <div id="aboutMsg" class="meta" style="display:none;color:green"></div>
+            </div>
+          </div>
+          <div class="col">
+            <label>About Image
+              <input id="aboutImage" type="file" accept="image/*" />
+              <img id="aboutPreview" class="img-preview" alt="About preview" />
+              <div id="aboutSize" class="meta"></div>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section id="panel-products" class="panel">
+        <h2 style="display:flex;align-items:center;justify-content:space-between">Products
+          <button id="addNewBtn" class="btn" style="padding:8px 10px;font-size:.9rem">+ Add New</button>
+        </h2>
+        <div class="small">Add products that will appear on the site. Images are saved as data URLs.</div>
+        <div style="margin-top:8px">
+          <label>Product Name<input id="pName" type="text" placeholder="Name" /></label>
+          <div class="row">
+            <div class="col"><label>Brand<input id="pBrand" type="text" placeholder="Brand" /></label></div>
+            <div class="col"><label>Category<select id="pCat"><option value="home">Home</option><option value="bathroom">Bathroom</option><option value="kitchen">Kitchen</option><option value="laundry">Laundry</option><option value="wellness">Wellness</option></select></label></div>
+          </div>
+          <div class="row">
+            <div class="col"><label>Price (₹)<input id="pPrice" type="number" placeholder="Price" /></label></div>
+            <div class="col"><label>Old Price (optional)<input id="pOldPrice" type="number" placeholder="Old Price" /></label></div>
+          </div>
+          <label>Description<textarea id="pDesc" rows="3" placeholder="Short description"></textarea></label>
+          <label>Badge (optional)<input id="pBadge" type="text" placeholder="bestseller, new, eco, etc." /></label>
+          <label>Image<input id="pImage" type="file" accept="image/*" /><img id="pImagePreview" class="img-preview" alt="preview" /></label>
+          <div class="controls"><button id="saveBtn" class="btn">Save Product</button> <button id="clearBtn" class="btn ghost">Clear All Products</button></div>
+
+          <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between">
+            <div class="small">Existing products below. Click Edit to modify.</div>
+          </div>
+
+          <div class="product-list" id="productList"></div>
+
+          <!-- Modal for add/edit -->
+          <div id="prodModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;align-items:center;justify-content:center;padding:24px;">
+            <div style="background:#fff;border-radius:8px;padding:18px;max-width:720px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.3);position:relative;">
+              <button id="modalClose" style="position:absolute;right:12px;top:12px;border:none;background:transparent;font-size:18px;cursor:pointer">✕</button>
+              <h3 id="modalTitle">Add Product</h3>
+              <div style="margin-top:8px">
+                <label>Product Name<input id="mName" type="text" placeholder="Name" /></label>
+                <div class="row">
+                  <div class="col"><label>Brand<input id="mBrand" type="text" placeholder="Brand" /></label></div>
+                  <div class="col"><label>Category<select id="mCat"><option value="home">Home</option><option value="bathroom">Bathroom</option><option value="kitchen">Kitchen</option><option value="laundry">Laundry</option><option value="wellness">Wellness</option></select></label></div>
+                </div>
+                <div class="row">
+                  <div class="col"><label>Price (₹)<input id="mPrice" type="number" placeholder="Price" /></label></div>
+                  <div class="col"><label>Old Price (optional)<input id="mOldPrice" type="number" placeholder="Old Price" /></label></div>
+                </div>
+                <label>Description<textarea id="mDesc" rows="3" placeholder="Short description"></textarea></label>
+                <label>Badge (optional)<input id="mBadge" type="text" placeholder="bestseller, new, eco, etc." /></label>
+                <label>Image<input id="mImage" type="file" accept="image/*" /><img id="mImagePreview" class="img-preview" alt="preview" /></label>
+                <div style="display:flex;gap:8px;margin-top:10px"><button id="mSave" class="btn">Save</button><button id="mCancel" class="btn ghost">Cancel</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="panel-contact" class="panel">
+        <h2>Contact</h2>
+        <div class="row">
+          <div class="col">
+            <label>Phone<input id="contactPhone" type="text" placeholder="+91 98765 43210" /></label>
+            <label>Email<input id="contactEmail" type="text" placeholder="support@cleanco.in" /></label>
+            <label>Address<input id="contactAddress" type="text" placeholder="Mumbai, Maharashtra, India" /></label>
+            <div class="controls"><button id="saveContact" class="btn">Save Contact Details</button> <button id="clearContact" class="btn ghost">Clear</button>
+              <div id="contactMsg" class="meta" style="display:none;color:green"></div>
+            </div>
+          </div>
+          <div class="col">
+            <h4>Contact submissions</h4>
+            <div id="messages" class="msg-list"></div>
+            <div class="controls"><button id="clearMessages" class="btn ghost">Clear Messages</button></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Keys
+    const KEY_PRODUCTS = 'CLEANCOPRODUCTS';
+    const KEY_SETTINGS = 'CLEANC_SETTINGS';
+    const KEY_MESSAGES = 'CLEANC_CONTACTS';
+
+    // Sidebar nav
+    const menu = document.getElementById('menu');
+    menu.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-panel]');
+      if(!btn) return;
+      document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const panelId = 'panel-' + btn.dataset.panel;
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById(panelId).classList.add('active');
+    });
+
+    // Helpers
+    function readFileAsDataURL(input, cb){
+      const f = input.files && input.files[0]; if(!f) return cb(null,0);
+      const reader = new FileReader(); reader.onload=()=>cb(reader.result,f.size); reader.readAsDataURL(f);
+    }
+    function prettyBytes(n){ if(!n) return '0 B'; const units=['B','KB','MB']; let i=0; while(n>1024 && i<2){ n/=1024; i++; } return n.toFixed(n>99?0:1)+' '+units[i]; }
+    function loadSettings(){ try{return JSON.parse(localStorage.getItem(KEY_SETTINGS)||'null')||{} }catch(e){return{}} }
+    function saveSettings(obj){ localStorage.setItem(KEY_SETTINGS, JSON.stringify(obj)); }
+    function loadProducts(){ try{return JSON.parse(localStorage.getItem(KEY_PRODUCTS)||'null')||[] }catch(e){return[]} }
+    function saveProducts(list){ localStorage.setItem(KEY_PRODUCTS, JSON.stringify(list)); }
+    function loadMessages(){ try{return JSON.parse(localStorage.getItem(KEY_MESSAGES)||'null')||[] }catch(e){return[]} }
+    function saveMessages(list){ localStorage.setItem(KEY_MESSAGES, JSON.stringify(list)); }
+
+    // HERO UI
+    const heroImage = document.getElementById('heroImage');
+    const heroPreview = document.getElementById('heroPreview');
+    const heroSize = document.getElementById('heroSize');
+    const hideHeroContent = document.getElementById('hideHeroContent');
+    const saveHero = document.getElementById('saveHero');
+    const clearHero = document.getElementById('clearHero');
+    const heroMsg = document.getElementById('heroMsg');
+    let heroData=''; let heroFileSize=0;
+    heroImage.addEventListener('change', e=>{
+      readFileAsDataURL(e.target, (data,size)=>{ heroData=data; heroFileSize=size; heroPreview.src=data||''; heroSize.textContent = 'Size: '+prettyBytes(size); if(size>500000) heroSize.innerHTML += ' <span class="warn">(Recommended max 500KB)</span>'; });
+    });
+    saveHero.addEventListener('click', async ()=>{
+      // try server first
+      if(window.fetch){
+        try{
+          const fd = new FormData();
+          if(heroImage.files[0]) fd.append('hero', heroImage.files[0]);
+          fd.append('hideHeroContent', hideHeroContent.checked ? 'true' : 'false');
+          const res = await fetch('/api/settings', { method:'POST', body: fd });
+          if(res.ok){
+            // mirror server settings into localStorage so other tabs update via storage event
+            try{ const sres = await fetch('/api/settings'); if(sres.ok){ const serverSettings = await sres.json(); localStorage.setItem('CLEANC_SETTINGS', JSON.stringify(serverSettings)); } }catch(e){ console.warn('mirror settings failed',e); }
+            heroMsg.style.display='block'; heroMsg.textContent='Hero saved to server.'; setTimeout(()=>heroMsg.style.display='none',2000); return; }
+        }catch(e){ console.warn('server saveHero failed',e); }
+      }
+      // fallback: save locally
+      const settings = loadSettings();
+      if(heroData){ settings.heroImgData = heroData; settings.heroImgSize = heroFileSize; }
+      settings.hideHeroContent = hideHeroContent.checked;
+      saveSettings(settings);
+      heroMsg.style.display='block'; heroMsg.textContent='Hero saved locally.';
+      setTimeout(()=>heroMsg.style.display='none',2000);
+    });
+    clearHero.addEventListener('click', ()=>{ const s=loadSettings(); delete s.heroImgData; delete s.heroImgSize; saveSettings(s); heroPreview.src=''; heroSize.textContent=''; hideHeroContent.checked=false; heroMsg.style.display='block'; heroMsg.textContent='Hero cleared.'; setTimeout(()=>heroMsg.style.display='none',2000); });
+
+    // ABOUT UI
+    const aboutImage = document.getElementById('aboutImage');
+    const aboutPreview = document.getElementById('aboutPreview');
+    const aboutSize = document.getElementById('aboutSize');
+    const aboutText = document.getElementById('aboutText');
+    const saveAbout = document.getElementById('saveAbout');
+    const clearAbout = document.getElementById('clearAbout');
+    const aboutMsg = document.getElementById('aboutMsg');
+    let aboutData=''; let aboutFileSize=0;
+    aboutImage.addEventListener('change', e=>{ readFileAsDataURL(e.target,(data,size)=>{ aboutData=data; aboutFileSize=size; aboutPreview.src=data||''; aboutSize.textContent='Size: '+prettyBytes(size); if(size>500000) aboutSize.innerHTML += ' <span class="warn">(Recommended max 500KB)</span>'; }); });
+    saveAbout.addEventListener('click', async ()=>{
+      // try server
+      if(window.fetch){
+        try{
+          const fd = new FormData();
+          fd.append('aboutText', aboutText.value || '');
+          if(aboutImage.files[0]) fd.append('about', aboutImage.files[0]);
+          const res = await fetch('/api/settings', { method:'POST', body: fd });
+          if(res.ok){
+            try{ const sres = await fetch('/api/settings'); if(sres.ok){ const serverSettings = await sres.json(); localStorage.setItem('CLEANC_SETTINGS', JSON.stringify(serverSettings)); } }catch(e){ console.warn('mirror settings failed',e); }
+            aboutMsg.style.display='block'; aboutMsg.textContent='About saved to server.'; setTimeout(()=>aboutMsg.style.display='none',2000); return; }
+        }catch(e){ console.warn('server saveAbout failed',e); }
+      }
+      const s=loadSettings(); s.aboutText = aboutText.value || ''; if(aboutData) { s.aboutImgData = aboutData; s.aboutImgSize = aboutFileSize; } saveSettings(s); aboutMsg.style.display='block'; aboutMsg.textContent='About updated locally.'; setTimeout(()=>aboutMsg.style.display='none',2000);
+    });
+    clearAbout.addEventListener('click', ()=>{ const s=loadSettings(); delete s.aboutImgData; delete s.aboutImgSize; delete s.aboutText; saveSettings(s); aboutPreview.src=''; aboutText.value=''; aboutMsg.style.display='block'; aboutMsg.textContent='About cleared.'; setTimeout(()=>aboutMsg.style.display='none',2000); });
+
+    // PRODUCTS UI (add + list + delete)
+    const pName = document.getElementById('pName');
+    const pBrand = document.getElementById('pBrand');
+    const pCat = document.getElementById('pCat');
+    const pPrice = document.getElementById('pPrice');
+    const pOldPrice = document.getElementById('pOldPrice');
+    const pDesc = document.getElementById('pDesc');
+    const pBadge = document.getElementById('pBadge');
+    const pImage = document.getElementById('pImage');
+    const pImagePreview = document.getElementById('pImagePreview');
+    const saveBtn = document.getElementById('saveBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const productList = document.getElementById('productList');
+    let pImageData=''; let pImageSize=0;
+    pImage.addEventListener('change', e=> readFileAsDataURL(e.target,(d,size)=>{ pImageData=d; pImageSize=size; pImagePreview.src=d||'';}));
+    async function refreshProducts(){
+      // try server
+      try{
+        const res = await fetch('/api/products');
+      if(res.ok){ const serverList = await res.json(); productList.innerHTML = serverList.map(p=>`<div class="product-item"><img src="${p.img||''}" onerror="this.style.display='none'"/><div style="flex:1"><strong>${p.name}</strong><div class="small">${p.brand} • ₹${p.price}${p.priceOld? ' (was ₹'+p.priceOld+')':''}</div></div><div><button data-id="${p.id}" class="btn ghost edit">Edit</button> <button data-id="${p.id}" class="btn ghost del">Delete</button></div></div>`).join('') || '<div class="small">No products</div>';
+        // wire edit and delete for server list
+        document.querySelectorAll('.del').forEach(b=>b.addEventListener('click', async e=>{ const id=Number(e.target.dataset.id); if(!confirm('Delete this product?')) return; await fetch('/api/products/'+id,{method:'DELETE'}); try{ const listRes = await fetch('/api/products'); if(listRes.ok){ const serverList2 = await listRes.json(); localStorage.setItem('CLEANCOPRODUCTS', JSON.stringify(serverList2)); } }catch(err){ console.warn('mirror after delete failed',err); } await refreshProducts(); }));
+        document.querySelectorAll('.edit').forEach(b=>b.addEventListener('click', e=>{ const id=Number(e.target.dataset.id); openEditModal(id); }));
+        return; }
+      }catch(e){ console.warn('fetch /api/products failed',e); }
+      // fallback local
+      const list=loadProducts(); productList.innerHTML = list.map(p=>`<div class="product-item"><img src="${p.imgData||''}" onerror="this.style.display='none'"/><div style="flex:1"><strong>${p.name}</strong><div class="small">${p.brand} • ₹${p.price}${p.priceOld? ' (was ₹'+p.priceOld+')':''}</div></div><div><button data-id="${p.id}" class="btn ghost edit">Edit</button> <button data-id="${p.id}" class="btn ghost del">Delete</button></div></div>`).join('') || '<div class="small">No products</div>';
+      // wire edit and delete
+      document.querySelectorAll('.del').forEach(b=>b.addEventListener('click', e=>{ const id=Number(e.target.dataset.id); if(!confirm('Delete this product?')) return; const l=loadProducts().filter(p=>p.id!==id); saveProducts(l); refreshProducts(); }));
+      document.querySelectorAll('.edit').forEach(b=>b.addEventListener('click', e=>{ const id=Number(e.target.dataset.id); openEditModal(id); }));
+    }
+    saveBtn.addEventListener('click', async ()=>{
+      const name=pName.value.trim(); if(!name){alert('Name required');return;}
+      // try server API
+      if(window.fetch){
+        try{
+          const fd = new FormData();
+          if(pImage.files[0]) fd.append('image', pImage.files[0]);
+          fd.append('cat', pCat.value);
+          fd.append('brand', pBrand.value || 'Brand');
+          fd.append('name', name);
+          fd.append('desc', pDesc.value || '');
+          fd.append('price', pPrice.value || 0);
+          fd.append('priceOld', pOldPrice.value || '');
+          fd.append('badge', pBadge.value || '');
+          const res = await fetch('/api/products', { method:'POST', body: fd });
+          if(res.ok){
+            // fetch server products and mirror to localStorage
+            try{ const listRes = await fetch('/api/products'); if(listRes.ok){ const serverList = await listRes.json(); localStorage.setItem('CLEANCOPRODUCTS', JSON.stringify(serverList)); } }catch(e){ console.warn('mirror products failed',e); }
+            await refreshProducts(); pName.value=''; pBrand.value=''; pPrice.value=''; pOldPrice.value=''; pDesc.value=''; pBadge.value=''; pImage.value=''; pImagePreview.src=''; pImageData=''; return; }
+        }catch(e){ console.warn('server save product failed',e); }
+      }
+      // fallback local
+      const obj={ id: Date.now(), cat:pCat.value, brand:pBrand.value||'Brand', name, desc:pDesc.value||'', emoji:'📦', bg:'#f4f4f4', price: Number(pPrice.value)||0, priceOld: pOldPrice.value ? Number(pOldPrice.value) : null, badge: pBadge.value||null, imgData: pImageData||null };
+      const list=loadProducts(); list.unshift(obj); saveProducts(list); refreshProducts(); // reset
+      pName.value=''; pBrand.value=''; pPrice.value=''; pOldPrice.value=''; pDesc.value=''; pBadge.value=''; pImage.value=''; pImagePreview.src=''; pImageData='';
+    });
+    clearBtn.addEventListener('click', async ()=>{ if(!confirm('Remove all products?')) return; // try server (no bulk delete endpoint) -> fallback to local
+      try{ const res = await fetch('/api/products'); if(res.ok){ const list = await res.json(); for(const p of list){ await fetch('/api/products/'+p.id, { method:'DELETE' }); } await refreshProducts(); return; } }catch(e){ console.warn('server clear products failed', e); }
+      localStorage.removeItem(KEY_PRODUCTS); refreshProducts(); });
+
+    // CONTACT UI (details + messages)
+    const contactPhone = document.getElementById('contactPhone');
+    const contactEmail = document.getElementById('contactEmail');
+    const contactAddress = document.getElementById('contactAddress');
+    const saveContact = document.getElementById('saveContact');
+    const clearContact = document.getElementById('clearContact');
+    const contactMsg = document.getElementById('contactMsg');
+    const messagesEl = document.getElementById('messages');
+    const clearMessages = document.getElementById('clearMessages');
+    saveContact.addEventListener('click', ()=>{ const s=loadSettings(); s.contact = { phone: contactPhone.value, email: contactEmail.value, address: contactAddress.value }; saveSettings(s); contactMsg.style.display='block'; contactMsg.textContent='Contact details saved.'; setTimeout(()=>contactMsg.style.display='none',2000); });
+    clearContact.addEventListener('click', ()=>{ const s=loadSettings(); delete s.contact; saveSettings(s); contactPhone.value=''; contactEmail.value=''; contactAddress.value=''; contactMsg.style.display='block'; contactMsg.textContent='Contact cleared.'; setTimeout(()=>contactMsg.style.display='none',2000); });
+    function refreshMessages(){ const list=loadMessages(); messagesEl.innerHTML = list.length ? list.map(m=>`<div class="msg-item"><div><strong>${m.name||'Anonymous'}</strong> <span class="small">• ${new Date(m.ts).toLocaleString()}</span></div><div class="small">${m.email||''} • ${m.phone||''}</div><div style="margin-top:8px">${m.subject?'<strong>'+m.subject+'</strong><br>':''}${m.message||''}</div><div style="margin-top:8px"><button data-id="${m.id}" class="btn ghost delmsg">Delete</button></div></div>`).join('') : '<div class="small">No messages yet</div>'; document.querySelectorAll('.delmsg').forEach(b=>b.addEventListener('click', e=>{ const id=Number(e.target.dataset.id); if(!confirm('Delete message?')) return; const l=loadMessages().filter(x=>x.id!==id); saveMessages(l); refreshMessages(); })); }
+    clearMessages.addEventListener('click', ()=>{ if(!confirm('Clear all messages?')) return; localStorage.removeItem(KEY_MESSAGES); refreshMessages(); });
+
+    // Init: populate UI from settings & products
+    async function initAdmin(){
+      // try load from server settings
+      try{
+        const res = await fetch('/api/settings');
+        if(res.ok){ const s = await res.json(); if(s.heroImg){ heroPreview.src = s.heroImg; } if(s.hideHeroContent) hideHeroContent.checked = !!s.hideHeroContent; if(s.aboutText) aboutText.value = s.aboutText; if(s.aboutImg) aboutPreview.src = s.aboutImg; if(s.contact){ contactPhone.value = s.contact.phone || ''; contactEmail.value = s.contact.email || ''; contactAddress.value = s.contact.address || ''; } await refreshProducts(); await refreshMessages(); return; }
+      }catch(e){ console.warn('load settings from server failed',e); }
+      const s=loadSettings(); if(s.heroImgData){ heroPreview.src=s.heroImgData; heroSize.textContent = s.heroImgSize ? 'Size: '+prettyBytes(s.heroImgSize) : ''; } hideHeroContent.checked = !!s.hideHeroContent; if(s.aboutText) aboutText.value = s.aboutText; if(s.aboutImgData){ aboutPreview.src = s.aboutImgData; aboutSize.textContent = s.aboutImgSize ? 'Size: '+prettyBytes(s.aboutImgSize) : ''; } const c = s.contact || {}; contactPhone.value = c.phone || ''; contactEmail.value = c.email || ''; contactAddress.value = c.address || ''; await refreshProducts(); refreshMessages(); }
+    initAdmin();
+
+    // --- Modal / edit support ---
+    const prodModal = document.getElementById('prodModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalClose = document.getElementById('modalClose');
+    const mCancel = document.getElementById('mCancel');
+    const mSave = document.getElementById('mSave');
+    const addNewBtn = document.getElementById('addNewBtn');
+    const mName = document.getElementById('mName');
+    const mBrand = document.getElementById('mBrand');
+    const mCat = document.getElementById('mCat');
+    const mPrice = document.getElementById('mPrice');
+    const mOldPrice = document.getElementById('mOldPrice');
+    const mDesc = document.getElementById('mDesc');
+    const mBadge = document.getElementById('mBadge');
+    const mImage = document.getElementById('mImage');
+    const mImagePreview = document.getElementById('mImagePreview');
+
+    let editingId = null;
+
+    function openModal(){ prodModal.style.display='flex'; }
+    function closeModal(){ prodModal.style.display='none'; editingId=null; modalTitle.textContent='Add Product'; mName.value=''; mBrand.value=''; mPrice.value=''; mOldPrice.value=''; mDesc.value=''; mBadge.value=''; mImage.value=''; mImagePreview.src=''; }
+
+    function openAddModal(){ editingId = null; modalTitle.textContent='Add Product'; openModal(); }
+
+    async function openEditModal(id){
+      let list = loadProducts();
+      let p = list.find(x=>x.id===id);
+      if(!p){
+        // try fetch from server
+        try{
+          const res = await fetch('/api/products');
+          if(res.ok){ const serverList = await res.json(); p = serverList.find(x=>Number(x.id)===Number(id)); }
+        }catch(e){ console.warn('fetch product for edit failed',e); }
+      }
+      if(!p) return alert('Product not found');
+      editingId = id; modalTitle.textContent='Edit Product';
+      mName.value = p.name||''; mBrand.value = p.brand||''; mCat.value = p.cat||'home'; mPrice.value = p.price||''; mOldPrice.value = p.priceOld||''; mDesc.value = p.desc||''; mBadge.value = p.badge||'';
+      // server products use `img` path, local products use `imgData`
+      mImagePreview.src = p.img || p.imgData || '';
+      openModal();
+    }
+
+    addNewBtn.addEventListener('click', openAddModal);
+    modalClose.addEventListener('click', closeModal);
+    mCancel.addEventListener('click', closeModal);
+
+    mImage.addEventListener('change', e=> readFileAsDataURL(e.target,(d,size)=>{ mImagePreview.src=d||''; }));
+
+    mSave.addEventListener('click', async ()=>{
+      const name = mName.value.trim(); if(!name) return alert('Name required');
+      const obj = { id: editingId || Date.now(), cat: mCat.value, brand: mBrand.value||'Brand', name, desc: mDesc.value||'', emoji:'📦', bg:'#f4f4f4', price: Number(mPrice.value)||0, priceOld: mOldPrice.value ? Number(mOldPrice.value) : null, badge: mBadge.value||null, imgData: mImagePreview.src||null };
+      // try server create/update
+      if(window.fetch){
+        try{
+          const fd = new FormData();
+          if(mImage.files[0]) fd.append('image', mImage.files[0]);
+          fd.append('cat', obj.cat);
+          fd.append('brand', obj.brand);
+          fd.append('name', obj.name);
+          fd.append('desc', obj.desc);
+          fd.append('price', obj.price);
+          fd.append('priceOld', obj.priceOld || '');
+          fd.append('badge', obj.badge || '');
+          let res;
+          if(editingId){
+            res = await fetch('/api/products/'+editingId, { method:'PUT', body: fd });
+          } else {
+            res = await fetch('/api/products', { method:'POST', body: fd });
+          }
+          if(res && res.ok){ try{ const listRes = await fetch('/api/products'); if(listRes.ok){ const serverList = await listRes.json(); localStorage.setItem('CLEANCOPRODUCTS', JSON.stringify(serverList)); } }catch(e){ console.warn('mirror after save failed',e); } closeModal(); await refreshProducts(); return; }
+        }catch(e){ console.warn('server save product failed',e); }
+      }
+      // fallback local save
+      const list = loadProducts();
+      if(editingId){ const idx = list.findIndex(x=>x.id===editingId); if(idx>-1) list[idx] = obj; else list.unshift(obj); } else { list.unshift(obj); }
+      saveProducts(list);
+      closeModal();
+      await refreshProducts();
+    });
+
+    // Listen for storage events to update UI opportunistically
+    window.addEventListener('storage', (e)=>{ if(e.key === KEY_PRODUCTS || e.key === KEY_SETTINGS || e.key === KEY_MESSAGES || !e.key){ initAdmin(); } });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "SUPABASE_URL": "https://xyzcompany.supabase.co",
+  "SUPABASE_SERVICE_ROLE_KEY": "<SERVICE_ROLE_KEY>",
+  "BUCKET": "uploads",
+  "SOURCE_UPLOADS_DIR": "./uploads",
+  "SQLITE_FILE": "./data.sqlite",
+  "DRY_RUN": true
+}
