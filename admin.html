@@ -4,6 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CleanCo Admin</title>
+    <!-- Quill WYSIWYG -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <!-- SheetJS for Excel parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
     :root{--accent:#1e5c3f}
     body{font-family:Inter,system-ui,Arial,Helvetica,sans-serif;margin:0;background:#f7faf7;color:#0b1a17}
@@ -44,6 +49,7 @@
         <button data-panel="products">Products</button>
         <button data-panel="contact">Contact</button>
         <button data-panel="messages">Messages</button>
+        <button data-panel="terms">Terms & Conditions</button>
       </nav>
       
     </aside>
@@ -57,6 +63,11 @@
           <input id="heroImage" type="file" accept="image/*" />
           <img id="heroPreview" class="img-preview" alt="Hero preview" />
           <div id="heroSize" class="meta"></div>
+        </label>
+        <label style="margin-top:12px">Mobile Banner Image
+          <input id="heroMobileImage" type="file" accept="image/*" />
+          <img id="heroMobilePreview" class="img-preview" alt="Mobile Hero preview" />
+          <div id="heroMobileSize" class="meta"></div>
         </label>
         <label style="margin-top:10px"><input id="hideHeroContent" type="checkbox"/> Hide hero text/buttons on site</label>
         <div class="controls">
@@ -100,6 +111,12 @@
         <h2 style="display:flex;align-items:center;justify-content:space-between">Products
           <button id="addNewBtn" class="btn" style="padding:8px 10px;font-size:.9rem">+ Add New</button>
         </h2>
+        <!-- Import products via Excel -->
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;padding: 12px;background-color: #e9eeec;border-radius: 12px;">
+          <input id="productsExcel" type="file" accept=".xlsx,.xls,.csv" />
+          <button id="importExcelBtn" class="btn">Import Excel</button>
+          <div id="importMsg" class="meta" style="margin-left:12px"></div>
+        </div>
         <div class="small">Add products that will appear on the site. Images are saved as data URLs.</div>
         <div style="margin-top:8px">
           <label>Product Name<input id="pName" type="text" placeholder="Name" /></label>
@@ -166,6 +183,22 @@
         <div class="controls"><button id="clearMessages" class="btn ghost">Clear All Messages</button></div>
       </section>
 
+      <!-- TERMS -->
+      <section id="panel-terms" class="panel">
+        <h2>Terms & Conditions</h2>
+        <div class="small">Write your Terms & Conditions. Use the editor toolbar to format headings, lists, links and more.</div>
+        <div style="margin-top:12px">
+          <label style="font-weight:600;display:block;margin-top:8px">Publish <input id="termsPublish" type="checkbox" style="margin-left:8px"/></label>
+          <label style="font-weight:600;display:block;margin-top:8px">Last updated: <span id="termsLastUpdated" class="meta">Not set</span></label>
+          <div id="termsEditor" style="height:320px;border:1px solid #e6e6e6;border-radius:8px;margin-top:8px;background:#fff"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+            <button id="saveTerms" class="btn">Save & Publish</button>
+            <button id="previewTerms" class="btn ghost">Preview</button>
+            <div id="termsMsg" class="meta" style="margin-left:8px"></div>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -203,7 +236,10 @@
     // HERO UI
     const heroImage = document.getElementById('heroImage');
     const heroPreview = document.getElementById('heroPreview');
+    const heroMobileImage = document.getElementById('heroMobileImage');
+    const heroMobilePreview = document.getElementById('heroMobilePreview');
     const heroSize = document.getElementById('heroSize');
+    const heroMobileSize = document.getElementById('heroMobileSize');
     const hideHeroContent = document.getElementById('hideHeroContent');
     const saveHero = document.getElementById('saveHero');
     const clearHero = document.getElementById('clearHero');
@@ -212,6 +248,10 @@
     heroImage.addEventListener('change', e=>{
       readFileAsDataURL(e.target, (data,size)=>{ heroData=data; heroFileSize=size; heroPreview.src=data||''; heroSize.textContent = 'Size: '+prettyBytes(size); if(size>500000) heroSize.innerHTML += ' <span class="warn">(Recommended max 500KB)</span>'; });
     });
+    let heroMobileData=''; let heroMobileFileSize=0;
+    heroMobileImage.addEventListener('change', e=>{
+      readFileAsDataURL(e.target, (data,size)=>{ heroMobileData=data; heroMobileFileSize=size; heroMobilePreview.src=data||''; heroMobileSize.textContent = 'Size: '+prettyBytes(size); if(size>500000) heroMobileSize.innerHTML += ' <span class="warn">(Recommended max 500KB)</span>'; });
+    });
     saveHero.addEventListener('click', async ()=>{
       // try server first
       if(window.fetch){
@@ -219,6 +259,8 @@
           const fd = new FormData();
           if(heroImage.files[0]) fd.append('hero', heroImage.files[0]);
           fd.append('hideHeroContent', hideHeroContent.checked ? 'true' : 'false');
+          // include mobile hero if provided
+          if(heroMobileImage.files[0]) fd.append('heroMobile', heroMobileImage.files[0]);
           const res = await fetch('/api/settings', { method:'POST', body: fd });
           if(res.ok){
             // mirror server settings into localStorage so other tabs update via storage event
@@ -228,13 +270,14 @@
       }
       // fallback: save locally
       const settings = loadSettings();
-      if(heroData){ settings.heroImgData = heroData; settings.heroImgSize = heroFileSize; }
+  if(heroData){ settings.heroImgData = heroData; settings.heroImgSize = heroFileSize; }
+  if(heroMobileData){ settings.heroMobileImgData = heroMobileData; settings.heroMobileImgSize = heroMobileFileSize; }
       settings.hideHeroContent = hideHeroContent.checked;
       saveSettings(settings);
       heroMsg.style.display='block'; heroMsg.textContent='Hero saved locally.';
       setTimeout(()=>heroMsg.style.display='none',2000);
     });
-    clearHero.addEventListener('click', ()=>{ const s=loadSettings(); delete s.heroImgData; delete s.heroImgSize; saveSettings(s); heroPreview.src=''; heroSize.textContent=''; hideHeroContent.checked=false; heroMsg.style.display='block'; heroMsg.textContent='Hero cleared.'; setTimeout(()=>heroMsg.style.display='none',2000); });
+  clearHero.addEventListener('click', ()=>{ const s=loadSettings(); delete s.heroImgData; delete s.heroImgSize; delete s.heroMobileImgData; delete s.heroMobileImgSize; saveSettings(s); heroPreview.src=''; heroSize.textContent=''; heroMobilePreview.src=''; heroMobileSize.textContent=''; hideHeroContent.checked=false; heroMsg.style.display='block'; heroMsg.textContent='Hero cleared.'; setTimeout(()=>heroMsg.style.display='none',2000); });
 
     // ABOUT UI
     const aboutImage = document.getElementById('aboutImage');
@@ -281,6 +324,9 @@
     const saveBtn = document.getElementById('saveBtn');
     const clearBtn = document.getElementById('clearBtn');
     const productList = document.getElementById('productList');
+  const productsExcel = document.getElementById('productsExcel');
+  const importExcelBtn = document.getElementById('importExcelBtn');
+  const importMsg = document.getElementById('importMsg');
     let pImageData=''; let pImageSize=0;
     pImage.addEventListener('change', e=> readFileAsDataURL(e.target,(d,size)=>{ pImageData=d; pImageSize=size; pImagePreview.src=d||'';}));
     async function refreshProducts(){
@@ -361,6 +407,7 @@
         if(res.ok){
           const s = await res.json();
           if(s.heroImg) heroPreview.src = s.heroImg;
+          if(s.heroMobileImg) heroMobilePreview.src = s.heroMobileImg;
           if(s.hideHeroContent) hideHeroContent.checked = !!s.hideHeroContent;
           if(s.aboutTitle) aboutTitle.value = s.aboutTitle;
           if(s.aboutText) aboutText.value = s.aboutText;
@@ -454,8 +501,137 @@
       await refreshProducts();
     });
 
+    // Excel import support
+    function dataURLtoFile(dataurl, filename) {
+      const arr = dataurl.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while(n--) { u8arr[n] = bstr.charCodeAt(n); }
+      return new File([u8arr], filename, { type: mime });
+    }
+
+    importExcelBtn.addEventListener('click', async () => {
+      const f = productsExcel.files && productsExcel.files[0];
+      if(!f) return alert('Select an Excel or CSV file first');
+      importMsg.textContent = 'Parsing…';
+      try{
+        const ab = await f.arrayBuffer();
+        const wb = XLSX.read(ab, { type: 'array' });
+        const sheetName = wb.SheetNames[0];
+        const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: '' });
+        if(!rows.length) return importMsg.textContent = 'No rows found in sheet';
+
+        let imported = 0;
+        for(const [i,row] of rows.entries()){
+          // Normalize column names (lowercase)
+          const map = {};
+          Object.keys(row).forEach(k => { map[k.trim().toLowerCase()] = row[k]; });
+          const name = map['name'] || map['product name'] || map['title'];
+          if(!name) continue; // skip rows without name
+          const obj = {
+            cat: map['cat'] || map['category'] || 'home',
+            brand: map['brand'] || '',
+            name: String(name),
+            desc: map['desc'] || map['description'] || '',
+            price: Number(map['price']) || 0,
+            priceOld: map['priceold'] ? Number(map['priceold']) : (map['old price'] ? Number(map['old price']) : null),
+            badge: map['badge'] || null,
+            img: map['img'] || map['image'] || null // can be dataURL or URL
+          };
+
+          // Try server first
+          let savedOnServer = false;
+          if(window.fetch){
+            try{
+              const fd = new FormData();
+              fd.append('cat', obj.cat);
+              fd.append('brand', obj.brand || 'Brand');
+              fd.append('name', obj.name);
+              fd.append('desc', obj.desc || '');
+              fd.append('price', obj.price || 0);
+              fd.append('priceOld', obj.priceOld || '');
+              fd.append('badge', obj.badge || '');
+              // if img is a data URL, convert to file
+              if(obj.img && typeof obj.img === 'string' && obj.img.startsWith('data:')){
+                try{ fd.append('image', dataURLtoFile(obj.img, `img_${Date.now()}_${i}.png`)); }catch(e){ console.warn('image convert failed',e); }
+              }
+              const res = await fetch('/api/products', { method: 'POST', body: fd });
+              if(res && res.ok) savedOnServer = true;
+            }catch(e){ console.warn('server import product failed', e); }
+          }
+
+          if(!savedOnServer){
+            // fallback to local storage
+            const list = loadProducts();
+            const localObj = { id: Date.now() + i, cat: obj.cat, brand: obj.brand||'Brand', name: obj.name, desc: obj.desc||'', emoji:'📦', bg:'#f4f4f4', price: obj.price||0, priceOld: obj.priceOld||null, badge: obj.badge||null, imgData: (obj.img && String(obj.img).startsWith('data:')) ? obj.img : null };
+            list.unshift(localObj); saveProducts(list);
+          }
+          imported++;
+        }
+
+        importMsg.textContent = `Imported ${imported} rows.`;
+        await refreshProducts();
+      }catch(err){ console.error(err); importMsg.textContent = 'Import failed: '+String(err.message||err); }
+      setTimeout(()=>importMsg.textContent='',3000);
+    });
+
     // Listen for storage events to update UI opportunistically
     window.addEventListener('storage', (e)=>{ if(e.key === KEY_PRODUCTS || e.key === KEY_SETTINGS || e.key === KEY_MESSAGES || !e.key){ initAdmin(); } });
+
+  // TERMS editor (Quill)
+  (function(){
+    let quill;
+    try{
+      quill = new Quill('#termsEditor', {
+        theme: 'snow',
+        modules: { toolbar: [['bold','italic','underline'], [{ 'header': [1,2,3,false] }], [{ 'list':'ordered'}, { 'list':'bullet' }], ['link','clean'], [{ 'align': [] }]] }
+      });
+    }catch(e){ console.warn('Quill init failed',e); }
+
+    const saveTermsBtn = document.getElementById('saveTerms');
+    const previewBtn = document.getElementById('previewTerms');
+    const publishToggle = document.getElementById('termsPublish');
+    const lastUpdatedEl = document.getElementById('termsLastUpdated');
+    const termsMsg = document.getElementById('termsMsg');
+
+    async function loadTerms(){
+      // try server
+      try{
+        const res = await fetch('/api/settings');
+        if(res.ok){ const s = await res.json(); if(s.termsHtml || s.terms){ const html = s.termsHtml || s.terms; quill.root.innerHTML = html; publishToggle.checked = !!s.termsPublished; lastUpdatedEl.textContent = s.termsUpdated || 'Not set'; return; } }
+      }catch(e){ console.warn('load terms from server failed',e); }
+      // fallback local
+      const s = loadSettings(); if(s.termsHtml){ quill.root.innerHTML = s.termsHtml; publishToggle.checked = !!s.termsPublished; lastUpdatedEl.textContent = s.termsUpdated || 'Not set'; }
+    }
+
+    saveTermsBtn.addEventListener('click', async ()=>{
+      const html = quill.root.innerHTML.trim();
+      if(!html || html === '<p><br></p>'){ termsMsg.textContent = 'Cannot save empty content'; setTimeout(()=>termsMsg.textContent='',2500); return; }
+      const payload = { termsHtml: html, termsPublished: publishToggle.checked, termsUpdated: new Date().toISOString() };
+      // try server
+      try{
+        const fd = new FormData(); fd.append('contact','{}'); // keep existing API shape
+        // send terms as JSON in a 'terms' field
+        fd.append('terms', JSON.stringify(payload));
+        const res = await fetch('/api/settings', { method: 'POST', body: fd });
+        if(res.ok){ termsMsg.textContent = 'Saved to server'; localStorage.setItem(KEY_SETTINGS, JSON.stringify(Object.assign(loadSettings(), payload))); lastUpdatedEl.textContent = payload.termsUpdated; setTimeout(()=>termsMsg.textContent='',2000); return; }
+      }catch(e){ console.warn('save terms to server failed',e); }
+      // fallback: save locally
+      const s = loadSettings(); s.termsHtml = html; s.termsPublished = publishToggle.checked; s.termsUpdated = payload.termsUpdated; saveSettings(s); termsMsg.textContent = 'Saved locally'; lastUpdatedEl.textContent = payload.termsUpdated; setTimeout(()=>termsMsg.textContent='',2000);
+    });
+
+    previewBtn.addEventListener('click', ()=>{
+      const html = quill.root.innerHTML || '';
+      const w = window.open('', '_blank', 'width=800,height=600');
+      w.document.write(`<html><head><title>Terms Preview</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Inter,system-ui,Arial,Helvetica,sans-serif;padding:20px;line-height:1.6;color:#111}</style></head><body>${html}</body></html>`);
+      w.document.close();
+    });
+
+    // initial load
+    setTimeout(loadTerms, 200);
+  })();
 
   </script>
 </body>
