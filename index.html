@@ -6,6 +6,8 @@
   <title>CleanCo — Premium Hygiene Solutions</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Feather icons (outlined SVG icons) -->
+  <script src="https://unpkg.com/feather-icons"></script>
   <style>
     /* ══ VARIABLES ══════════════════════════════════════════ */
     :root {
@@ -92,6 +94,22 @@
     }
 
     .nav-actions { display:flex; align-items:center; gap:1rem; }
+  .phone-action{display:inline-flex;align-items:center;gap:.7rem;padding:.45rem .8rem;background:#1b2251;border-radius:32px;border:1px solid rgba(0,0,0,0.04);color:#ffffff;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+  /* header phone pill (desktop) */
+  .phone-action{display:inline-flex;align-items:center;gap:6px;padding:7px 14px 7px 8px;background:#0b2140;border-radius:40px;color:#ffffff;font-weight:800;text-decoration:none;box-shadow:0 8px 24px rgba(11,33,64,0.18)}
+  .phone-action .phone-icon{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#ffffff;color:#2b1730;font-size:18px;flex-shrink:0}
+  .phone-action .phone-number{font-size:15px;letter-spacing:.02em;font-weight: 500;}
+  /* mobile menu phone pill */
+  .mobile-nav .mobile-phone-action{position:fixed;left:12px;bottom:18px;z-index:2100;display:inline-flex;align-items:center;gap:10px;padding:10px 16px;background:#0b2140;border-radius:40px;color:#fff;font-weight:800;text-decoration:none;box-shadow:0 8px 24px rgba(11,33,64,0.18)}
+  .mobile-nav .mobile-phone-action .phone-icon{width:36px;height:36px;border-radius:50%;background:#fde8ee;color:#2b1730;display:inline-flex;align-items:center;justify-content:center}
+  .mobile-nav .mobile-phone-action .phone-number{font-size:0.95rem}
+
+  /* Hide desktop header phone pill on small screens — mobile menu shows the number */
+  @media (max-width: 900px){
+    .phone-action{ display: none !important; }
+    /* ensure mobile pill is visible */
+    .mobile-nav .mobile-phone-action{ display: inline-flex !important; }
+  }
     .btn-nav {
       background:var(--green-mid);
       color:var(--white);
@@ -531,7 +549,10 @@
       font-size:1.4rem; margin-bottom:1.2rem;
       transition:background .3s;
     }
-    .why-card:hover .why-icon { background:var(--green-mid); }
+  .why-icon svg { width:28px; height:28px; color:var(--green-mid); transition:color .25s, stroke .25s, opacity .25s; }
+  .why-card:hover .why-icon { background:var(--green-mid); }
+  /* Make the icon stroke/fill white on hover so it remains visible against green background */
+  .why-card:hover .why-icon svg { color: #ffffff !important; stroke: #ffffff !important; }
     .why-title { font-size:1rem; font-weight:700; color:var(--ink); margin-bottom:.4rem; }
     .why-desc { font-size:.82rem; color:var(--gray-500); line-height:1.7; }
 
@@ -539,7 +560,7 @@
     #contact { padding:80px 5%; background:var(--white); }
 
     .contact-info-row {
-      display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem;
       margin-bottom:3.5rem;
     }
     .contact-info-card {
@@ -659,6 +680,7 @@
       padding:1.4rem 0;
       display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
     }
+    .footer-gst { color:rgba(255,255,255,.6); font-size:.9rem }
     .footer-copy { font-size:.78rem; color:rgba(255,255,255,.35); }
     .footer-legal { display:flex; gap:1.8rem; }
     .footer-legal a { font-size:.75rem; color:rgba(255,255,255,.35); transition:color .25s; }
@@ -740,7 +762,8 @@
     <li><a href="#contact">Contact Us</a></li>
   </ul>
   <div class="nav-actions">
-    <button class="btn-nav" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact Us</button>
+    <!-- phone quick action (icon + number) -->
+    <a href="tel:+917702261723" class="phone-action" aria-label="Call us"><span class="phone-icon">📞</span><span class="phone-number">+91 7702261723</span></a>
   </div>
   <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
 </nav>
@@ -752,6 +775,8 @@
   <a href="#products" onclick="closeMobile()">Products</a>
   <a href="#why" onclick="closeMobile()">Why Us</a>
   <a href="#contact" onclick="closeMobile()">Contact Us</a>
+  <!-- mobile phone pill -->
+  <a href="tel:+917702261723" class="mobile-phone-action" id="mobilePhoneLink"><span class="phone-icon">📞</span><span class="phone-number">+91 7702261723</span></a>
 </div>
 
 <!-- ══ HERO ══════════════════════════════════════════════════ -->
@@ -859,34 +884,34 @@
 
     <div class="why-grid">
       <div class="why-card reveal">
-        <div class="why-icon">🚚</div>
-        <div class="why-title">Fast Delivery</div>
-        <div class="why-desc">Same-day delivery available in all major metro cities. Orders placed before 2 PM are dispatched the same day.</div>
+        <div class="why-icon"><i data-feather="zap"></i></div>
+        <div class="why-title">Advanced Cleaning Formulas</div>
+        <div class="why-desc">Powerful formulations designed to remove tough stains, grease, and germs effectively.</div>
       </div>
       <div class="why-card reveal reveal-delay-1">
-        <div class="why-icon">🛡️</div>
-        <div class="why-title">Quality Assured</div>
-        <div class="why-desc">Every product is independently tested and certified. We stand by every bottle with our quality guarantee.</div>
+        <div class="why-icon"><i data-feather="check-circle"></i></div>
+        <div class="why-title">Consistent Product Quality</div>
+        <div class="why-desc">Every batch is manufactured with strict quality checks to ensure reliable performance.</div>
       </div>
       <div class="why-card reveal reveal-delay-2">
-        <div class="why-icon">🌿</div>
-        <div class="why-title">Eco-Friendly</div>
-        <div class="why-desc">Biodegradable and sustainable formulas that protect your family and the environment simultaneously.</div>
+        <div class="why-icon"><i data-feather="layers"></i></div>
+        <div class="why-title">Wide Product Range</div>
+        <div class="why-desc">Complete cleaning solutions for homes, offices, commercial, and industrial spaces.</div>
       </div>
       <div class="why-card reveal reveal-delay-3">
-        <div class="why-icon">↩️</div>
-        <div class="why-title">Easy Returns</div>
-        <div class="why-desc">7-day no-questions-asked returns policy. We make it simple to return or exchange any product you're not satisfied with.</div>
+        <div class="why-icon"><i data-feather="truck"></i></div>
+        <div class="why-title">Bulk Supply Capability</div>
+        <div class="why-desc">Efficient production and packaging capacity to handle high-volume requirements.</div>
       </div>
       <div class="why-card reveal reveal-delay-4">
-        <div class="why-icon">🎧</div>
-        <div class="why-title">24/7 Support</div>
-        <div class="why-desc">Our dedicated customer care team is available around the clock. Always here when you need us.</div>
+        <div class="why-icon"><i data-feather="dollar-sign"></i></div>
+        <div class="why-title">Competitive Pricing</div>
+        <div class="why-desc">Cost-effective cleaning solutions without compromising on quality.</div>
       </div>
       <div class="why-card reveal reveal-delay-5">
-        <div class="why-icon">🏆</div>
-        <div class="why-title">Award Winning</div>
-        <div class="why-desc">Recognised for quality and innovation for 5 consecutive years. India's most trusted hygiene brand.</div>
+        <div class="why-icon"><i data-feather="shield"></i></div>
+        <div class="why-title">Trusted Manufacturing Standards</div>
+        <div class="why-desc">Produced using modern processes with a focus on safety, hygiene, and reliability.</div>
       </div>
     </div>
   </div>
@@ -918,13 +943,7 @@
         <div class="ci-icon">📍</div>
         <div class="ci-label">Office</div>
         <div class="ci-val">123 Clean Street</div>
-        <div class="ci-sub">Mumbai, Maharashtra, India 400001</div>
-      </div>
-      <div class="contact-info-card reveal reveal-delay-3">
-        <div class="ci-icon">🕐</div>
-        <div class="ci-label">Hours</div>
-        <div class="ci-val">Mon–Sat: 9:00 AM – 7:00 PM</div>
-        <div class="ci-sub">Sunday: Closed</div>
+        <div class="ci-sub">Noida, Uttar Pradesh, India, 201301.</div>
       </div>
     </div>
 
@@ -962,8 +981,8 @@
   <div class="footer-grid">
     <div>
       <div class="footer-brand-logo">
-        <div class="logo-icon">🌿</div>
-        <span>CleanCo</span>
+
+        <span>CleanKard</span>
       </div>
       <p class="footer-tagline">
         India's premium cleaning & hygiene brand. Making homes and workplaces shine since 2016. Committed to quality, sustainability, and customer trust.
@@ -1017,13 +1036,24 @@
 
   <div class="footer-bottom">
     <span class="footer-copy">© 2026 CleanCo Hygiene Pvt. Ltd. All rights reserved.</span>
+    <span class="footer-gst">GSTIN: 27AABCU9603R1ZV</span>
     <div class="footer-legal">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-      <a href="#">Cookie Policy</a>
+      <a href="#" id="openTermsBtn">Terms & Conditions</a>
     </div>
   </div>
 </footer>
+
+<!-- Terms modal -->
+<div id="termsModal" style="display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:24px">
+  <div class="terms-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
+  <div class="terms-dialog" style="position:relative;z-index:2201;background:#fff;border-radius:12px;max-width:900px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div class="terms-header" style="padding:16px 20px;border-bottom:1px solid #eee;position:sticky;top:0;background:#fff;display:flex;align-items:center;justify-content:space-between;z-index:10">
+      <div style="font-weight:800">Terms & Conditions</div>
+      <button id="closeTerms" style="border:none;background:transparent;font-size:18px;cursor:pointer">✕</button>
+    </div>
+    <div class="terms-body" style="padding:18px 20px;overflow:auto;">Loading…</div>
+  </div>
+</div>
 
 <!-- ══ BACK TO TOP ════════════════════════════════════════════ -->
 <div id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
@@ -1359,6 +1389,37 @@ async function applySettings(){
   }
   if(!s) return;
   try{
+    // keep current settings for resize handler and future updates
+    window.__CLEANC_CURRENT_SETTINGS = s;
+    // hero background chooser: prefer mobile hero on small viewports
+    (function applyHeroBackground(){
+      try{
+        const hero = document.getElementById('hero');
+        if(!hero) return;
+        const desktop = s.heroImg || s.heroImgData || null;
+        const mobile = s.heroMobileImg || s.heroMobileImgData || null;
+        function choose(){
+          if(window.innerWidth <= 900 && mobile) return mobile;
+          if(desktop) return desktop;
+          return null;
+        }
+        const url = choose();
+        if(url) hero.style.backgroundImage = `url('${url}')`;
+        else hero.style.backgroundImage = '';
+        // install resize listener once to swap images responsively
+        if(!window.__CLEANC_HERO_RESIZE_INSTALLED){
+          window.addEventListener('resize', ()=>{
+            const cur = window.__CLEANC_CURRENT_SETTINGS || {};
+            const heroEl = document.getElementById('hero'); if(!heroEl) return;
+            const d = cur.heroImg || cur.heroImgData || null;
+            const m = cur.heroMobileImg || cur.heroMobileImgData || null;
+            const chosen = (window.innerWidth <= 900 && m) ? m : (d || '');
+            heroEl.style.backgroundImage = chosen ? `url('${chosen}')` : '';
+          });
+          window.__CLEANC_HERO_RESIZE_INSTALLED = true;
+        }
+      }catch(e){ console.warn('applyHeroBackground failed', e); }
+    })();
     // About title
     if(s.aboutTitle){
       const el = document.getElementById('aboutTitle');
@@ -1398,6 +1459,38 @@ async function applySettings(){
       if(fci[0] && c.phone) fci[0].textContent = c.phone;
       if(fci[1] && c.email) fci[1].textContent = c.email;
       if(fci[2] && c.address) fci[2].textContent = c.address;
+
+      // Header phone pill (desktop)
+      try{
+        const headerPhone = document.querySelector('.phone-action');
+        if(headerPhone){
+          if(c.phone){
+            const tel = 'tel:' + String(c.phone).replace(/\s+/g,'');
+            headerPhone.setAttribute('href', tel);
+            const span = headerPhone.querySelector('.phone-number');
+            if(span) span.textContent = c.phone;
+            headerPhone.style.display = 'inline-flex';
+          } else {
+            headerPhone.style.display = 'none';
+          }
+        }
+      }catch(e){console.warn('applySettings headerPhone update failed', e)}
+
+      // Mobile menu phone pill
+      try{
+        const mobileLink = document.getElementById('mobilePhoneLink');
+        if(mobileLink){
+          if(c.phone){
+            const tel = 'tel:' + String(c.phone).replace(/\s+/g,'');
+            mobileLink.setAttribute('href', tel);
+            const mspan = mobileLink.querySelector('.phone-number');
+            if(mspan) mspan.textContent = c.phone;
+            mobileLink.style.display = 'inline-flex';
+          } else {
+            mobileLink.style.display = 'none';
+          }
+        }
+      }catch(e){console.warn('applySettings mobilePhone update failed', e)}
     }
   }catch(e){ console.warn('applySettings failed',e); }
 }
@@ -1414,7 +1507,42 @@ document.addEventListener('DOMContentLoaded', ()=>{
     // open admin.html on same origin/host
     window.open(url.origin + '/admin.html', '_blank');
   });
+  try{ if(window.feather) feather.replace(); }catch(e){console.warn('feather init failed',e);} 
 });
+// include DOMPurify for sanitization
+const dpScript = document.createElement('script'); dpScript.src = 'https://cdn.jsdelivr.net/npm/dompurify@2.4.0/dist/purify.min.js'; document.head.appendChild(dpScript);
+
+// TERMS modal logic
+function initTermsModal(){
+  const openBtn = document.getElementById('openTermsBtn');
+  const modal = document.getElementById('termsModal');
+  const bodyEl = modal && modal.querySelector('.terms-body');
+  const closeBtn = document.getElementById('closeTerms');
+  const overlay = modal && modal.querySelector('.terms-overlay');
+
+  async function loadAndShow(){
+    if(!modal || !bodyEl) return;
+    try{
+      let s = null;
+      try{ const res = await fetch('/api/settings'); if(res.ok) s = await res.json(); }catch(e){ /* noop */ }
+      if(!s){ try{ const raw = localStorage.getItem('CLEANC_SETTINGS'); if(raw) s = JSON.parse(raw); }catch(e){} }
+      const html = (s && (s.termsHtml || s.terms)) || '<p>No terms available.</p>';
+      const sanitized = window.DOMPurify ? DOMPurify.sanitize(html, {ALLOWED_TAGS: ['b','i','u','p','h1','h2','h3','h4','ul','ol','li','a','strong','em','br','div'], ALLOWED_ATTR: ['href','target']}) : html;
+      bodyEl.innerHTML = sanitized;
+    }catch(e){ bodyEl.innerHTML = '<p>Failed to load terms.</p>'; }
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    if(bodyEl) bodyEl.scrollTop = 0;
+  }
+
+  function close(){ if(!modal) return; modal.style.display='none'; document.body.style.overflow=''; }
+
+  if(openBtn) openBtn.addEventListener('click', (e)=>{ e.preventDefault(); loadAndShow(); });
+  if(closeBtn) closeBtn.addEventListener('click', close);
+  if(overlay) overlay.addEventListener('click', close);
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') close(); });
+}
+setTimeout(initTermsModal, 300);
 </script>
 </body>
 </html>
