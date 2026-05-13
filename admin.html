@@ -43,8 +43,9 @@
         <button data-panel="about">About Us</button>
         <button data-panel="products">Products</button>
         <button data-panel="contact">Contact</button>
+        <button data-panel="messages">Messages</button>
       </nav>
-      <div style="margin-top:18px;font-size:.9rem;color:#666">Local demo admin — data stored in browser only.</div>
+      
     </aside>
 
     <main class="main">
@@ -68,17 +69,17 @@
       <!-- ABOUT -->
       <section id="panel-about" class="panel">
         <h2>About Us</h2>
+        <label>Title<input id="aboutTitle" type="text" placeholder="India's #1 Premium Hygiene Brand" /></label>
+        <label>About Text
+          <textarea id="aboutText" rows="6" placeholder="About us content (paragraph 1)"></textarea>
+        </label>
+        <label>About Text (Paragraph 2)
+          <textarea id="aboutText2" rows="4" placeholder="Second paragraph (optional)"></textarea>
+        </label>
+        <label>Mission Statement
+          <textarea id="aboutMission" rows="3" placeholder="Our mission text"></textarea>
+        </label>
         <div class="row">
-          <div class="col">
-            <label>About Text
-              <textarea id="aboutText" rows="6" placeholder="About us content"></textarea>
-            </label>
-            <div class="controls">
-              <button id="saveAbout" class="btn">Save About</button>
-              <button id="clearAbout" class="btn ghost">Clear About</button>
-              <div id="aboutMsg" class="meta" style="display:none;color:green"></div>
-            </div>
-          </div>
           <div class="col">
             <label>About Image
               <input id="aboutImage" type="file" accept="image/*" />
@@ -86,6 +87,11 @@
               <div id="aboutSize" class="meta"></div>
             </label>
           </div>
+        </div>
+        <div class="controls">
+          <button id="saveAbout" class="btn">Save About</button>
+          <button id="clearAbout" class="btn ghost">Clear About</button>
+          <div id="aboutMsg" class="meta" style="display:none;color:green"></div>
         </div>
       </section>
 
@@ -144,21 +150,20 @@
       <!-- CONTACT -->
       <section id="panel-contact" class="panel">
         <h2>Contact</h2>
-        <div class="row">
-          <div class="col">
-            <label>Phone<input id="contactPhone" type="text" placeholder="+91 98765 43210" /></label>
-            <label>Email<input id="contactEmail" type="text" placeholder="support@cleanco.in" /></label>
-            <label>Address<input id="contactAddress" type="text" placeholder="Mumbai, Maharashtra, India" /></label>
-            <div class="controls"><button id="saveContact" class="btn">Save Contact Details</button> <button id="clearContact" class="btn ghost">Clear</button>
-              <div id="contactMsg" class="meta" style="display:none;color:green"></div>
-            </div>
-          </div>
-          <div class="col">
-            <h4>Contact submissions</h4>
-            <div id="messages" class="msg-list"></div>
-            <div class="controls"><button id="clearMessages" class="btn ghost">Clear Messages</button></div>
-          </div>
+        <label>Phone<input id="contactPhone" type="text" placeholder="+91 98765 43210" /></label>
+        <label>Email<input id="contactEmail" type="text" placeholder="support@cleanco.in" /></label>
+        <label>Address<input id="contactAddress" type="text" placeholder="Mumbai, Maharashtra, India" /></label>
+        <div class="controls"><button id="saveContact" class="btn">Save Contact Details</button> <button id="clearContact" class="btn ghost">Clear</button>
+          <div id="contactMsg" class="meta" style="display:none;color:green"></div>
         </div>
+      </section>
+
+      <!-- MESSAGES -->
+      <section id="panel-messages" class="panel">
+        <h2>Messages</h2>
+        <div class="small">Contact form submissions from visitors.</div>
+        <div id="messages" class="msg-list"></div>
+        <div class="controls"><button id="clearMessages" class="btn ghost">Clear All Messages</button></div>
       </section>
 
     </main>
@@ -235,18 +240,23 @@
     const aboutImage = document.getElementById('aboutImage');
     const aboutPreview = document.getElementById('aboutPreview');
     const aboutSize = document.getElementById('aboutSize');
+    const aboutTitle = document.getElementById('aboutTitle');
     const aboutText = document.getElementById('aboutText');
+    const aboutText2 = document.getElementById('aboutText2');
+    const aboutMission = document.getElementById('aboutMission');
     const saveAbout = document.getElementById('saveAbout');
     const clearAbout = document.getElementById('clearAbout');
     const aboutMsg = document.getElementById('aboutMsg');
     let aboutData=''; let aboutFileSize=0;
     aboutImage.addEventListener('change', e=>{ readFileAsDataURL(e.target,(data,size)=>{ aboutData=data; aboutFileSize=size; aboutPreview.src=data||''; aboutSize.textContent='Size: '+prettyBytes(size); if(size>500000) aboutSize.innerHTML += ' <span class="warn">(Recommended max 500KB)</span>'; }); });
     saveAbout.addEventListener('click', async ()=>{
-      // try server
       if(window.fetch){
         try{
           const fd = new FormData();
+          fd.append('aboutTitle', aboutTitle.value || '');
           fd.append('aboutText', aboutText.value || '');
+          fd.append('aboutText2', aboutText2.value || '');
+          fd.append('aboutMission', aboutMission.value || '');
           if(aboutImage.files[0]) fd.append('about', aboutImage.files[0]);
           const res = await fetch('/api/settings', { method:'POST', body: fd });
           if(res.ok){
@@ -254,9 +264,9 @@
             aboutMsg.style.display='block'; aboutMsg.textContent='About saved to server.'; setTimeout(()=>aboutMsg.style.display='none',2000); return; }
         }catch(e){ console.warn('server saveAbout failed',e); }
       }
-      const s=loadSettings(); s.aboutText = aboutText.value || ''; if(aboutData) { s.aboutImgData = aboutData; s.aboutImgSize = aboutFileSize; } saveSettings(s); aboutMsg.style.display='block'; aboutMsg.textContent='About updated locally.'; setTimeout(()=>aboutMsg.style.display='none',2000);
+      const s=loadSettings(); s.aboutTitle = aboutTitle.value || ''; s.aboutText = aboutText.value || ''; s.aboutText2 = aboutText2.value || ''; s.aboutMission = aboutMission.value || ''; if(aboutData) { s.aboutImgData = aboutData; s.aboutImgSize = aboutFileSize; } saveSettings(s); aboutMsg.style.display='block'; aboutMsg.textContent='About updated locally.'; setTimeout(()=>aboutMsg.style.display='none',2000);
     });
-    clearAbout.addEventListener('click', ()=>{ const s=loadSettings(); delete s.aboutImgData; delete s.aboutImgSize; delete s.aboutText; saveSettings(s); aboutPreview.src=''; aboutText.value=''; aboutMsg.style.display='block'; aboutMsg.textContent='About cleared.'; setTimeout(()=>aboutMsg.style.display='none',2000); });
+    clearAbout.addEventListener('click', ()=>{ const s=loadSettings(); delete s.aboutImgData; delete s.aboutImgSize; delete s.aboutText; delete s.aboutText2; delete s.aboutTitle; delete s.aboutMission; saveSettings(s); aboutPreview.src=''; aboutTitle.value=''; aboutText.value=''; aboutText2.value=''; aboutMission.value=''; aboutMsg.style.display='block'; aboutMsg.textContent='About cleared.'; setTimeout(()=>aboutMsg.style.display='none',2000); });
 
     // PRODUCTS UI (add + list + delete)
     const pName = document.getElementById('pName');
@@ -330,17 +340,38 @@
     const clearMessages = document.getElementById('clearMessages');
     saveContact.addEventListener('click', ()=>{ const s=loadSettings(); s.contact = { phone: contactPhone.value, email: contactEmail.value, address: contactAddress.value }; saveSettings(s); contactMsg.style.display='block'; contactMsg.textContent='Contact details saved.'; setTimeout(()=>contactMsg.style.display='none',2000); });
     clearContact.addEventListener('click', ()=>{ const s=loadSettings(); delete s.contact; saveSettings(s); contactPhone.value=''; contactEmail.value=''; contactAddress.value=''; contactMsg.style.display='block'; contactMsg.textContent='Contact cleared.'; setTimeout(()=>contactMsg.style.display='none',2000); });
-    function refreshMessages(){ const list=loadMessages(); messagesEl.innerHTML = list.length ? list.map(m=>`<div class="msg-item"><div><strong>${m.name||'Anonymous'}</strong> <span class="small">• ${new Date(m.ts).toLocaleString()}</span></div><div class="small">${m.email||''} • ${m.phone||''}</div><div style="margin-top:8px">${m.subject?'<strong>'+m.subject+'</strong><br>':''}${m.message||''}</div><div style="margin-top:8px"><button data-id="${m.id}" class="btn ghost delmsg">Delete</button></div></div>`).join('') : '<div class="small">No messages yet</div>'; document.querySelectorAll('.delmsg').forEach(b=>b.addEventListener('click', e=>{ const id=Number(e.target.dataset.id); if(!confirm('Delete message?')) return; const l=loadMessages().filter(x=>x.id!==id); saveMessages(l); refreshMessages(); })); }
-    clearMessages.addEventListener('click', ()=>{ if(!confirm('Clear all messages?')) return; localStorage.removeItem(KEY_MESSAGES); refreshMessages(); });
+    async function refreshMessages(){
+      try{
+        const res = await fetch('/api/contacts');
+        if(res.ok){
+          const list = await res.json();
+          messagesEl.innerHTML = list.length ? list.map(m=>`<div class="msg-item"><div><strong>${m.name||'Anonymous'}</strong> <span class="small">• ${new Date(m.created_at).toLocaleString()}</span></div><div class="small">${m.email||''} • ${m.phone||''}</div><div style="margin-top:8px">${m.subject?'<strong>'+m.subject+'</strong><br>':''}${m.message||''}</div><div style="margin-top:8px"><button data-id="${m.id}" class="btn ghost delmsg">Delete</button></div></div>`).join('') : '<div class="small">No messages yet</div>';
+          document.querySelectorAll('.delmsg').forEach(b=>b.addEventListener('click', async e=>{ const id=Number(e.target.dataset.id); if(!confirm('Delete message?')) return; await fetch('/api/contacts/'+id,{method:'DELETE'}); refreshMessages(); }));
+          return;
+        }
+      }catch(e){ console.warn('fetch contacts failed',e); }
+      const list=loadMessages(); messagesEl.innerHTML = list.length ? list.map(m=>`<div class="msg-item"><div><strong>${m.name||'Anonymous'}</strong> <span class="small">• ${new Date(m.ts).toLocaleString()}</span></div><div class="small">${m.email||''} • ${m.phone||''}</div><div style="margin-top:8px">${m.subject?'<strong>'+m.subject+'</strong><br>':''}${m.message||''}</div><div style="margin-top:8px"><button data-id="${m.id}" class="btn ghost delmsg">Delete</button></div></div>`).join('') : '<div class="small">No messages yet</div>'; document.querySelectorAll('.delmsg').forEach(b=>b.addEventListener('click', e=>{ const id=Number(e.target.dataset.id); if(!confirm('Delete message?')) return; const l=loadMessages().filter(x=>x.id!==id); saveMessages(l); refreshMessages(); }));
+    }
+    clearMessages.addEventListener('click', async ()=>{ if(!confirm('Clear all messages?')) return; try{ const res = await fetch('/api/contacts'); if(res.ok){ const list = await res.json(); for(const m of list){ await fetch('/api/contacts/'+m.id,{method:'DELETE'}); } } }catch(e){ console.warn('clear messages failed',e); } refreshMessages(); });
 
     // Init: populate UI from settings & products
     async function initAdmin(){
-      // try load from server settings
       try{
         const res = await fetch('/api/settings');
-        if(res.ok){ const s = await res.json(); if(s.heroImg){ heroPreview.src = s.heroImg; } if(s.hideHeroContent) hideHeroContent.checked = !!s.hideHeroContent; if(s.aboutText) aboutText.value = s.aboutText; if(s.aboutImg) aboutPreview.src = s.aboutImg; if(s.contact){ contactPhone.value = s.contact.phone || ''; contactEmail.value = s.contact.email || ''; contactAddress.value = s.contact.address || ''; } await refreshProducts(); await refreshMessages(); return; }
+        if(res.ok){
+          const s = await res.json();
+          if(s.heroImg) heroPreview.src = s.heroImg;
+          if(s.hideHeroContent) hideHeroContent.checked = !!s.hideHeroContent;
+          if(s.aboutTitle) aboutTitle.value = s.aboutTitle;
+          if(s.aboutText) aboutText.value = s.aboutText;
+          if(s.aboutText2) aboutText2.value = s.aboutText2;
+          if(s.aboutMission) aboutMission.value = s.aboutMission;
+          if(s.aboutImg) aboutPreview.src = s.aboutImg;
+          if(s.contact){ contactPhone.value = s.contact.phone || ''; contactEmail.value = s.contact.email || ''; contactAddress.value = s.contact.address || ''; }
+          await refreshProducts(); await refreshMessages(); return;
+        }
       }catch(e){ console.warn('load settings from server failed',e); }
-      const s=loadSettings(); if(s.heroImgData){ heroPreview.src=s.heroImgData; heroSize.textContent = s.heroImgSize ? 'Size: '+prettyBytes(s.heroImgSize) : ''; } hideHeroContent.checked = !!s.hideHeroContent; if(s.aboutText) aboutText.value = s.aboutText; if(s.aboutImgData){ aboutPreview.src = s.aboutImgData; aboutSize.textContent = s.aboutImgSize ? 'Size: '+prettyBytes(s.aboutImgSize) : ''; } const c = s.contact || {}; contactPhone.value = c.phone || ''; contactEmail.value = c.email || ''; contactAddress.value = c.address || ''; await refreshProducts(); refreshMessages(); }
+      const s=loadSettings(); if(s.heroImgData){ heroPreview.src=s.heroImgData; heroSize.textContent = s.heroImgSize ? 'Size: '+prettyBytes(s.heroImgSize) : ''; } hideHeroContent.checked = !!s.hideHeroContent; if(s.aboutTitle) aboutTitle.value = s.aboutTitle; if(s.aboutText) aboutText.value = s.aboutText; if(s.aboutText2) aboutText2.value = s.aboutText2; if(s.aboutMission) aboutMission.value = s.aboutMission; if(s.aboutImgData){ aboutPreview.src = s.aboutImgData; aboutSize.textContent = s.aboutImgSize ? 'Size: '+prettyBytes(s.aboutImgSize) : ''; } const c = s.contact || {}; contactPhone.value = c.phone || ''; contactEmail.value = c.email || ''; contactAddress.value = c.address || ''; await refreshProducts(); refreshMessages(); }
     initAdmin();
 
     // --- Modal / edit support ---

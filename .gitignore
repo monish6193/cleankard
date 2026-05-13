@@ -1,0 +1,5 @@
+node_modules/
+uploads/
+supabase.config.json
+server.log
+.DS_Store

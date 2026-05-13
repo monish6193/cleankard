@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CleanCo — Premium Hygiene Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    /* ══ VARIABLES ══════════════════════════════════════════ */
+    :root {
+      --green-dark:   #1a4a35;
+      --green-mid:    #1e5c3f;
+      --green-hero:   #1d4d38;
+      --green-acc:    #2ecc71;
+      --green-light:  #3dd68c;
+      --green-pale:   #e8f5ee;
+      --green-tag:    #d1f0e0;
+      --white:        #ffffff;
+      --off-white:    #f8faf9;
+      --gray-50:      #f6f7f8;
+      --gray-100:     #eff1f0;
+      --gray-200:     #dde2df;
+      --gray-400:     #9aaba3;
+      --gray-500:     #708278;
+      --gray-700:     #3a4a42;
+      --ink:          #1a2620;
+      --orange:       #f97316;
+      --red:          #ef4444;
+      --blue:         #3b82f6;
+      --ff:           'Plus Jakarta Sans', sans-serif;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:    0 4px 16px rgba(0,0,0,.08);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,.12);
+      --r-sm:         8px;
+      --r-md:         12px;
+      --r-lg:         16px;
+      --r-xl:         24px;
+      --ease:         cubic-bezier(.25,.46,.45,.94);
+    }
+
+    /* ══ RESET ══════════════════════════════════════════════ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:var(--ff); color:var(--ink); background:var(--white); overflow-x:hidden; line-height:1.6; }
+    img { display:block; max-width:100%; }
+    a { text-decoration:none; color:inherit; }
+    ul { list-style:none; }
+    ::selection { background:var(--green-acc); color:var(--white); }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:#f0f0f0; }
+    ::-webkit-scrollbar-thumb { background:var(--green-mid); border-radius:3px; }
+
+    /* ══ NAVBAR ═════════════════════════════════════════════ */
+    #navbar {
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      background:rgba(255,255,255,0.96);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--gray-100);
+      padding:0 5%;
+      height:64px;
+      display:flex; align-items:center; justify-content:space-between;
+      transition:box-shadow .3s;
+    }
+    #navbar.scrolled { box-shadow:var(--shadow-md); }
+
+    .nav-brand {
+      display:flex; align-items:center; gap:.6rem;
+      font-weight:700; font-size:1.2rem; color:var(--ink);
+    }
+    .nav-brand-icon {
+      width:32px; height:32px;
+      background:linear-gradient(135deg, var(--green-mid), var(--green-acc));
+      border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:.9rem;
+    }
+
+    .nav-links {
+      display:flex; gap:2.2rem;
+    }
+    .nav-links a {
+      font-size:.875rem; font-weight:500;
+      color:var(--gray-700);
+      transition:color .25s;
+      position:relative;
+    }
+    .nav-links a.active, .nav-links a:hover { color:var(--green-mid); }
+    .nav-links a.active::after {
+      content:''; position:absolute; bottom:-4px; left:0; right:0;
+      height:2px; background:var(--green-acc); border-radius:2px;
+    }
+
+    .nav-actions { display:flex; align-items:center; gap:1rem; }
+    .btn-nav {
+      background:var(--green-mid);
+      color:var(--white);
+      font-size:.8rem; font-weight:600;
+      padding:.52rem 1.25rem;
+      border-radius:var(--r-sm);
+      border:none; cursor:pointer;
+      transition:background .25s, transform .2s;
+    }
+    .btn-nav:hover { background:var(--green-dark); transform:translateY(-1px); }
+
+    .hamburger {
+      display:none; flex-direction:column; gap:5px; cursor:pointer;
+    }
+    .hamburger span { display:block; width:22px; height:2px; background:var(--ink); border-radius:2px; transition:.3s; }
+    .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity:0; }
+    .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+    .mobile-nav {
+      display:none; position:fixed; inset:0; top:64px;
+      background:var(--white); z-index:999;
+      flex-direction:column; padding:2rem 5%; gap:1.5rem;
+      border-top:1px solid var(--gray-100);
+      opacity:0; pointer-events:none; transition:opacity .3s;
+    }
+    .mobile-nav.open { opacity:1; pointer-events:all; }
+    .mobile-nav a { font-size:1.1rem; font-weight:600; color:var(--ink); padding:.5rem 0; border-bottom:1px solid var(--gray-100); }
+
+    /* ══ HERO (BANNER) ═══════════════════════════════════════ */
+    #hero {
+      position:relative; overflow:hidden;
+      min-height:480px;
+      display:flex; align-items:center; padding:4rem 5%;
+      background-size:cover; background-position:center center;
+      background-repeat:no-repeat;
+    }
+
+    /* Adjustable banner image - replace this path with your asset */
+    #hero.banner { background-image:url('assets/hero-banner.png'); }
+
+    /* dark overlay to ensure text contrast */
+    #hero .hero-overlay {
+      position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,18,12,.55), rgba(10,18,12,.45)); z-index:1;
+    }
+
+    .hero-content {
+      position:relative; z-index:2; max-width:760px; color:var(--white);padding-top: 65px;
+    }
+
+    /* responsive adjustments */
+    @media(max-width:900px) {
+      #hero { padding:3rem 5%; min-height:420px; }
+      .hero-content { margin:0 auto; text-align:center; }
+      .hero-h1 { font-size:2rem; }
+      .hero-sub { margin:0 auto 1.2rem; }
+    }
+
+    .hero-tag {
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:30px;
+      padding:.35rem .9rem;
+      font-size:.72rem; font-weight:600;
+      color:rgba(255,255,255,.95);
+      letter-spacing:.04em;
+      margin-bottom:1.25rem;
+    }
+    .hero-tag-dot { width:6px; height:6px; background:var(--green-acc); border-radius:50%; flex-shrink:0; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+
+    .hero-h1 {
+      font-size:clamp(2.4rem,4.5vw,3.6rem);
+      font-weight:800; line-height:1.12;
+      color:var(--white);
+      margin-bottom:1rem;
+    }
+    .hero-h1 .accent { color:var(--green-acc); }
+
+    .hero-sub {
+      font-size:.925rem; font-weight:400;
+      color:rgba(255,255,255,.72);
+      max-width:440px; line-height:1.75;
+      margin-bottom:2.2rem;
+    }
+
+    .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2.8rem; }
+
+    .btn-primary {
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:var(--green-acc);
+      color:var(--ink);
+      font-size:.85rem; font-weight:700;
+      padding:.75rem 1.6rem; border-radius:var(--r-sm);
+      border:none; cursor:pointer;
+      transition:background .25s, transform .25s, box-shadow .25s;
+      box-shadow:0 4px 14px rgba(46,204,113,.35);
+    }
+    .btn-primary:hover { background:var(--green-light); transform:translateY(-2px); box-shadow:0 6px 20px rgba(46,204,113,.45); }
+    .btn-primary svg { width:14px; height:14px; }
+
+    .btn-secondary {
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:rgba(255,255,255,.1);
+      color:var(--white);
+      font-size:.85rem; font-weight:600;
+      padding:.75rem 1.6rem; border-radius:var(--r-sm);
+      border:1px solid rgba(255,255,255,.25); cursor:pointer;
+      transition:background .25s, transform .25s;
+      backdrop-filter:blur(4px);
+    }
+    .btn-secondary:hover { background:rgba(255,255,255,.18); transform:translateY(-2px); }
+
+    .hero-stats {
+      display:flex; gap:2.5rem; flex-wrap:wrap;
+    }
+    
+    .hero-stat-num {
+      font-size:1.6rem; font-weight:800; color:var(--white); line-height:1;
+    }
+    .hero-stat-label {
+      font-size:.72rem; color:rgba(255,255,255,.6); margin-top:.2rem; font-weight:400;
+    }
+    .hero-stat-sep {
+      width:1px; background:rgba(255,255,255,.15); align-self:stretch;
+    }
+
+    /* Hero right — product image area */
+    .hero-right {
+      position:relative; z-index:2;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .hero-img-wrap {
+      background:rgba(255,255,255,.1);
+      backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:var(--r-xl);
+      width:100%; max-width:480px;
+      aspect-ratio:4/3;
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden; position:relative;
+      animation:heroFloat 5s ease-in-out infinite;
+    }
+    @keyframes heroFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+    .hero-products-display {
+      display:flex; align-items:flex-end; gap:1.2rem;
+      padding:2rem;
+    }
+    .hpd-bottle {
+      display:flex; flex-direction:column; align-items:center; gap:.3rem;
+    }
+    .hpd-bottle-body {
+      border-radius:50% 50% 20% 20% / 60% 60% 20% 20%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.8rem; position:relative;
+      box-shadow:var(--shadow-lg);
+    }
+    .b1 { width:72px; height:110px; background:linear-gradient(180deg,#e8f8f0,#c3eed8); }
+    .b2 { width:56px; height:88px; background:linear-gradient(180deg,#f0f8ff,#d4ecfc); }
+    .b3 { width:64px; height:100px; background:linear-gradient(180deg,#fff8e8,#fde8b4); }
+    .b4 { width:50px; height:80px; background:linear-gradient(180deg,#fff0f0,#fdd4d4); }
+    .b5 { width:68px; height:105px; background:linear-gradient(180deg,#f0fff4,#bbf7d0); }
+    .hpd-label {
+      font-size:.55rem; font-weight:700; color:rgba(255,255,255,.7); text-transform:uppercase; letter-spacing:.08em;
+    }
+    .hpd-glow {
+      position:absolute; bottom:0; left:0; right:0; height:60px;
+      background:linear-gradient(to top, rgba(46,204,113,.15), transparent);
+    }
+
+    /* ══ MARQUEE ════════════════════════════════════════════ */
+    .marquee-bar {
+      background:var(--off-white);
+      border-top:1px solid var(--gray-100);
+      border-bottom:1px solid var(--gray-100);
+      padding:.7rem 0; overflow:hidden;
+    }
+    .marquee-track {
+      display:inline-flex; gap:0;
+      animation:marqScroll 24s linear infinite;
+      white-space:nowrap;
+    }
+    @keyframes marqScroll { to { transform:translateX(-50%); } }
+    .marquee-item {
+      display:inline-flex; align-items:center; gap:.6rem;
+      font-size:.72rem; font-weight:600;
+      color:var(--gray-500); letter-spacing:.06em; text-transform:uppercase;
+      padding:0 2rem;
+    }
+    .marquee-dot { width:4px; height:4px; background:var(--green-acc); border-radius:50%; flex-shrink:0; }
+
+    /* ══ SECTION BASE ═══════════════════════════════════════ */
+    .section { padding:80px 5%; }
+    .section-alt { background:var(--gray-50); }
+    .section-dark { background:linear-gradient(135deg, #1a4a35, #1e5c3f); }
+
+    .sec-eyebrow {
+      display:inline-flex; align-items:center; gap:.5rem;
+      background:var(--green-pale);
+      color:var(--green-mid);
+      font-size:.7rem; font-weight:700;
+      letter-spacing:.1em; text-transform:uppercase;
+      padding:.3rem .9rem; border-radius:30px;
+      margin-bottom:1rem;
+    }
+
+    .sec-title {
+      font-size:clamp(1.6rem,3vw,2.4rem);
+      font-weight:800; color:var(--ink); line-height:1.2;
+      margin-bottom:.7rem;
+    }
+    .sec-title-white { color:var(--white); }
+    .sec-sub {
+      font-size:.9rem; color:var(--gray-500);
+      max-width:560px;
+    }
+    .sec-sub-white { color:rgba(255,255,255,.65); }
+
+    .sec-header { margin-bottom:3rem; }
+    .sec-header-center { text-align:center; }
+    .sec-header-center .sec-sub { margin:0 auto; }
+
+    /* ══ ABOUT ══════════════════════════════════════════════ */
+    #about { padding:80px 5%; }
+
+    .about-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:5rem; align-items:center;
+      max-width:1200px; margin:0 auto;
+    }
+
+    .about-visual { position:relative; }
+
+    .about-img-main {
+      border-radius:var(--r-xl);
+      overflow:hidden;
+      aspect-ratio:4/3;
+      background:linear-gradient(135deg, var(--green-pale), #d4f5e4);
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+    .about-img-main::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg, rgba(30,92,63,.08), rgba(46,204,113,.12));
+    }
+    .about-emoji-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; padding:2rem; position:relative; z-index:1;
+    }
+    .aeg-item {
+      background:var(--white);
+      border-radius:var(--r-md);
+      padding:1.2rem .8rem;
+      text-align:center;
+      box-shadow:var(--shadow-md);
+      display:flex; flex-direction:column; align-items:center; gap:.4rem;
+    }
+    .aeg-emoji { font-size:1.8rem; }
+    .aeg-label { font-size:.62rem; font-weight:600; color:var(--gray-500); }
+
+    .about-badge-float {
+      position:absolute; bottom:-1.5rem; right:-1.5rem;
+      background:var(--green-mid);
+      color:var(--white);
+      border-radius:var(--r-lg);
+      padding:1.2rem 1.5rem;
+      box-shadow:var(--shadow-lg);
+      display:flex; flex-direction:column; align-items:center;
+      min-width:120px;
+    }
+    .abf-num { font-size:2rem; font-weight:800; line-height:1; }
+    .abf-text { font-size:.65rem; font-weight:500; opacity:.8; margin-top:.2rem; text-align:center; }
+
+    
+    .about-text { font-size:.9rem; color:var(--gray-500); line-height:1.85; margin-bottom:1rem; }
+
+    .about-pillars {
+      display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem;
+    }
+    .about-pillar {
+      background:var(--gray-50);
+      border:1px solid var(--gray-100);
+      border-radius:var(--r-md);
+      padding:1.2rem;
+      transition:border-color .3s, box-shadow .3s;
+    }
+    .about-pillar:hover { border-color:var(--green-acc); box-shadow:0 0 0 3px rgba(46,204,113,.1); }
+    .ap-icon {
+      width:36px; height:36px;
+      background:var(--green-pale);
+      border-radius:var(--r-sm);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; margin-bottom:.7rem;
+    }
+    .ap-title { font-size:.8rem; font-weight:700; color:var(--ink); margin-bottom:.25rem; }
+    .ap-desc { font-size:.75rem; color:var(--gray-500); line-height:1.6; }
+
+    .about-mission {
+      margin-top:2rem;
+      padding:1.5rem;
+      background:var(--green-pale);
+      border-left:3px solid var(--green-acc);
+      border-radius:0 var(--r-md) var(--r-md) 0;
+    }
+    .am-title { font-size:.75rem; font-weight:700; color:var(--green-dark); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.4rem; }
+    .am-text { font-size:.85rem; color:var(--green-dark); line-height:1.7; }
+
+    /* ══ PRODUCTS ═══════════════════════════════════════════ */
+    #products {
+      padding:80px 5%;
+      background:var(--white);
+    }
+
+    .products-filter {
+      display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:2.5rem;
+    }
+    .filter-pill {
+      background:var(--gray-100); color:var(--gray-700);
+      font-size:.78rem; font-weight:600;
+      padding:.45rem 1.1rem; border-radius:30px;
+      border:none; cursor:pointer;
+      transition:background .25s, color .25s;
+    }
+    .filter-pill:hover, .filter-pill.active {
+      background:var(--green-mid); color:var(--white);
+    }
+
+    .products-grid {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:1.25rem;
+    }
+
+    .product-card {
+      background:var(--white);
+      border:1px solid var(--gray-100);
+      border-radius:var(--r-lg);
+      overflow:hidden;
+      transition:box-shadow .35s var(--ease), transform .35s var(--ease), border-color .35s;
+      cursor:pointer;
+    }
+    .product-card:hover {
+      box-shadow:var(--shadow-lg);
+      transform:translateY(-5px);
+      border-color:var(--gray-200);
+    }
+
+    .product-img {
+      aspect-ratio:1/1;
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+      overflow:hidden;
+      
+    }
+    .product-emoji {
+      font-size:4rem;
+      transition:transform .4s var(--ease);
+    }
+    .product-card:hover .product-emoji { transform:scale(1.12); }
+
+    .product-badge {
+      position:absolute; top:.75rem; left:.75rem;
+      font-size:.62rem; font-weight:700;
+      padding:.25rem .65rem; border-radius:20px;
+      text-transform:uppercase; letter-spacing:.05em;
+    }
+    .badge-bestseller { background:#fef3c7; color:#92400e; }
+    .badge-new        { background:#d1fae5; color:#065f46; }
+    .badge-top        { background:#ede9fe; color:#5b21b6; }
+    .badge-eco        { background:#dcfce7; color:#15803d; }
+    .badge-sale       { background:#fee2e2; color:#991b1b; }
+    .badge-popular    { background:#fef9c3; color:#854d0e; }
+    .badge-discount   { background:#ffedd5; color:#9a3412; }
+
+    .product-body { padding:1rem; }
+
+    .product-brand {
+      font-size:.62rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:.1em; color:var(--green-mid); margin-bottom:.2rem;
+    }
+
+    .product-name {
+      font-size:.9rem; font-weight:700; color:var(--ink); line-height:1.35; margin-bottom:.35rem;
+    }
+
+    .product-desc {
+      font-size:.76rem; color:var(--gray-500); line-height:1.65; margin-bottom:.75rem;
+    }
+
+    .product-stars {
+      display:flex; align-items:center; gap:.3rem; margin-bottom:.6rem;
+    }
+    .stars { color:#f59e0b; font-size:.75rem; letter-spacing:.05em; }
+    .review-count { font-size:.7rem; color:var(--gray-400); }
+
+    .product-pricing {
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .price-now { font-size:1rem; font-weight:800; color:var(--ink); }
+    .price-old { font-size:.8rem; color:var(--gray-400); text-decoration:line-through; }
+    .price-save {
+      font-size:.65rem; font-weight:700;
+      background:var(--green-pale); color:var(--green-mid);
+      padding:.15rem .4rem; border-radius:4px;
+    }
+
+
+
+    /* ══ WHY US ══════════════════════════════════════════════ */
+    #why {
+      padding:80px 5%;
+      background:var(--off-white);
+    }
+
+    .why-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem;
+    }
+
+    .why-card {
+      background:var(--white);
+      border:1px solid var(--gray-100);
+      border-radius:var(--r-lg);
+      padding:2rem 1.8rem;
+      transition:box-shadow .3s, border-color .3s, transform .3s;
+    }
+    .why-card:hover {
+      box-shadow:var(--shadow-md);
+      border-color:var(--green-acc);
+      transform:translateY(-4px);
+    }
+    .why-icon {
+      width:52px; height:52px;
+      background:var(--green-pale);
+      border-radius:var(--r-md);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.4rem; margin-bottom:1.2rem;
+      transition:background .3s;
+    }
+    .why-card:hover .why-icon { background:var(--green-mid); }
+    .why-title { font-size:1rem; font-weight:700; color:var(--ink); margin-bottom:.4rem; }
+    .why-desc { font-size:.82rem; color:var(--gray-500); line-height:1.7; }
+
+    /* ══ CONTACT ════════════════════════════════════════════ */
+    #contact { padding:80px 5%; background:var(--white); }
+
+    .contact-info-row {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem;
+      margin-bottom:3.5rem;
+    }
+    .contact-info-card {
+      background:var(--gray-50);
+      border:1px solid var(--gray-100);
+      border-radius:var(--r-lg);
+      padding:1.8rem 1.5rem;
+      text-align:center;
+      transition:border-color .3s, box-shadow .3s;
+    }
+    .contact-info-card:hover { border-color:var(--green-acc); box-shadow:0 0 0 3px rgba(46,204,113,.1); }
+    .ci-icon { font-size:1.8rem; margin-bottom:.8rem; }
+    .ci-label { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:var(--green-mid); margin-bottom:.3rem; }
+    .ci-val { font-size:.85rem; font-weight:600; color:var(--ink); line-height:1.5; }
+    .ci-sub { font-size:.75rem; color:var(--gray-400); margin-top:.15rem; }
+
+    .contact-form-wrap {
+      background:var(--white);
+      border:1px solid var(--gray-100);
+      border-radius:var(--r-xl);
+      padding:3rem;
+      max-width:760px; margin:0 auto;
+      box-shadow:var(--shadow-md);
+    }
+    .cf-title { font-size:1.4rem; font-weight:800; color:var(--ink); margin-bottom:.4rem; text-align:center; }
+    .cf-sub { font-size:.85rem; color:var(--gray-500); text-align:center; margin-bottom:2.2rem; }
+
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    .form-group { display:flex; flex-direction:column; gap:.4rem; }
+    .form-group.full { grid-column:1/-1; }
+    .form-label { font-size:.75rem; font-weight:700; color:var(--gray-700); }
+    .form-input, .form-textarea {
+      border:1.5px solid var(--gray-200);
+      border-radius:var(--r-sm);
+      padding:.75rem 1rem;
+      font-family:var(--ff); font-size:.875rem;
+      color:var(--ink); background:var(--white);
+      outline:none; transition:border-color .25s, box-shadow .25s;
+      width:100%;
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color:var(--gray-400); }
+    .form-input:focus, .form-textarea:focus {
+      border-color:var(--green-acc);
+      box-shadow:0 0 0 3px rgba(46,204,113,.12);
+    }
+    .form-textarea { resize:vertical; min-height:120px; }
+    .btn-submit {
+      width:100%; margin-top:.5rem;
+      background:var(--green-mid); color:var(--white);
+      font-family:var(--ff); font-size:.9rem; font-weight:700;
+      padding:.9rem; border:none; border-radius:var(--r-sm);
+      cursor:pointer; transition:background .25s, transform .2s, box-shadow .25s;
+      box-shadow:0 4px 12px rgba(30,92,63,.25);
+    }
+    .btn-submit:hover { background:var(--green-dark); transform:translateY(-2px); box-shadow:0 6px 18px rgba(30,92,63,.35); }
+    .form-success {
+      display:none; text-align:center; padding:1rem;
+      background:var(--green-pale); border:1px solid var(--green-acc);
+      border-radius:var(--r-sm); color:var(--green-dark);
+      font-size:.85rem; font-weight:600; margin-top:.75rem;
+    }
+
+    /* ══ FOOTER ══════════════════════════════════════════════ */
+    #footer {
+      background:linear-gradient(135deg, #142b20, #1a3d2a);
+      padding:60px 5% 0;
+      color:rgba(255,255,255,.75);
+    }
+
+    .footer-grid {
+      display:grid; grid-template-columns:2fr 1fr 1.2fr 1.3fr;
+      gap:4rem; padding-bottom:4rem;
+      border-bottom:1px solid rgba(255,255,255,.1);
+    }
+
+    .footer-brand-logo {
+      display:flex; align-items:center; gap:.7rem;
+      font-weight:800; font-size:1.2rem; color:var(--white); margin-bottom:1rem;
+    }
+    .footer-brand-logo .logo-icon {
+      width:30px; height:30px;
+      background:linear-gradient(135deg, var(--green-acc), #27ae60);
+      border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:.85rem;
+    }
+    .footer-tagline {
+      font-size:.82rem; line-height:1.75; margin-bottom:1.5rem;
+      color:rgba(255,255,255,.55);
+    }
+    .footer-socials { display:flex; gap:.7rem; }
+    .footer-social-btn {
+      width:34px; height:34px;
+      border:1px solid rgba(255,255,255,.15);
+      border-radius:var(--r-sm);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.8rem; color:rgba(255,255,255,.6);
+      transition:background .25s, border-color .25s, color .25s;
+      cursor:pointer;
+    }
+    .footer-social-btn:hover { background:var(--green-mid); border-color:var(--green-acc); color:var(--white); }
+
+    .footer-col-title {
+      font-size:.72rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:.12em; color:rgba(255,255,255,.4);
+      margin-bottom:1.3rem;
+    }
+    .footer-links { display:flex; flex-direction:column; gap:.75rem; }
+    .footer-links a { font-size:.83rem; color:rgba(255,255,255,.6); transition:color .25s; }
+    .footer-links a:hover { color:var(--green-acc); }
+
+    .footer-contact-item {
+      display:flex; align-items:flex-start; gap:.6rem; margin-bottom:.85rem;
+    }
+    .fci-icon { font-size:.9rem; margin-top:.1rem; flex-shrink:0; color:var(--green-acc); }
+    .fci-text { font-size:.82rem; color:rgba(255,255,255,.6); line-height:1.5; }
+
+    .footer-bottom {
+      padding:1.4rem 0;
+      display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+    }
+    .footer-copy { font-size:.78rem; color:rgba(255,255,255,.35); }
+    .footer-legal { display:flex; gap:1.8rem; }
+    .footer-legal a { font-size:.75rem; color:rgba(255,255,255,.35); transition:color .25s; }
+    .footer-legal a:hover { color:var(--green-acc); }
+
+    /* ══ SCROLL REVEAL ══════════════════════════════════════ */
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+    .reveal.visible { opacity:1; transform:none; }
+    .reveal-delay-1 { transition-delay:.08s; }
+    .reveal-delay-2 { transition-delay:.16s; }
+    .reveal-delay-3 { transition-delay:.24s; }
+    .reveal-delay-4 { transition-delay:.32s; }
+    .reveal-delay-5 { transition-delay:.40s; }
+    .reveal-delay-6 { transition-delay:.48s; }
+
+    /* ══ BACK TO TOP ════════════════════════════════════════ */
+    #btt {
+      position:fixed; bottom:1.8rem; right:1.8rem; z-index:500;
+      width:42px; height:42px;
+      background:var(--green-mid); color:var(--white);
+      border-radius:var(--r-sm); cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.1rem; box-shadow:var(--shadow-md);
+      opacity:0; transform:translateY(8px);
+      transition:opacity .3s, transform .3s, background .25s;
+    }
+    #btt.show { opacity:1; transform:none; }
+    #btt:hover { background:var(--green-dark); }
+
+    /* ══ RESPONSIVE ══════════════════════════════════════════ */
+    @media(max-width:1200px) {
+      .products-grid { grid-template-columns:repeat(3,1fr); }
+      .footer-grid { grid-template-columns:1fr 1fr; gap:2.5rem; }
+    }
+    @media(max-width:900px) {
+      #hero { grid-template-columns:1fr; padding:90px 5% 50px; }
+      .hero-right { display:none; }
+      .about-grid { grid-template-columns:1fr; gap:3rem; }
+      .about-visual { display:none; }
+      .why-grid { grid-template-columns:repeat(2,1fr); }
+      .contact-info-row { grid-template-columns:1fr 1fr; }
+      .products-grid { grid-template-columns:repeat(2,1fr); }
+      .footer-grid { grid-template-columns:1fr; gap:2rem; }
+    }
+    @media(max-width:640px) {
+      .products-grid { grid-template-columns:1fr 1fr; }
+      .why-grid { grid-template-columns:1fr; }
+      .contact-info-row { grid-template-columns:1fr; }
+      .form-grid { grid-template-columns:1fr; }
+      .contact-form-wrap { padding:2rem 1.5rem; }
+      .nav-links, .btn-nav { display:none; }
+      .hamburger { display:flex; }
+      .mobile-nav { display:flex; }
+      .footer-bottom { flex-direction:column; text-align:center; }
+      .about-pillars { grid-template-columns:1fr; }
+    }
+    @media(max-width:440px) {
+      .products-grid { grid-template-columns:1fr; }
+    }
+
+    /* Layout helpers */
+    .container { max-width:1200px; margin:0 auto; }
+    .container-lg { max-width:1300px; margin:0 auto; }
+    .nav-logo { width:160px; display:block; }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#hero" class="nav-brand">
+    <img src="assets/logo.png" alt="CleanCo Logo" class="nav-logo">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#hero" class="active">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#contact">Contact Us</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-nav" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact Us</button>
+  </div>
+  <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- ══ MOBILE NAV ════════════════════════════════════════════ -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#hero" onclick="closeMobile()">Home</a>
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#products" onclick="closeMobile()">Products</a>
+  <a href="#why" onclick="closeMobile()">Why Us</a>
+  <a href="#contact" onclick="closeMobile()">Contact Us</a>
+</div>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section id="hero" class="banner">
+  <div class="hero-overlay" aria-hidden="true"></div>
+  <div class="hero-content">
+    <div class="hero-tag">
+      <span class="hero-tag-dot"></span>
+      Premium Hygiene Solutions
+    </div>
+
+    <h1 class="hero-h1">
+      Clean Smarter.<br>
+      <span class="accent">Live Better.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Discover professional-grade cleaning solutions for every space.
+      Eco-conscious, effective, and made for modern living.
+    </p>
+
+    <div class="hero-btns">
+
+      <button class="btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">
+        Explore Range
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </button>
+
+      <button class="btn-secondary" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">View Offers</button>
+
+    </div>
+  </div>
+</section>
+
+<div class="marquee-bar">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- ══ ABOUT ══════════════════════════════════════════════════ -->
+<section id="about" class="section">
+  <div class="about-grid container">
+    <div class="about-visual reveal">
+      <div class="about-img-main">
+        
+      </div>
+      
+    </div>
+
+    <div class="about-content">
+      <span class="sec-eyebrow reveal">Who We Are</span>
+      <h2 class="sec-title reveal reveal-delay-1" id="aboutTitle">India's #1 Premium<br>Hygiene Brand</h2>
+      <p class="about-text reveal reveal-delay-2" id="aboutPara1">
+        Founded in 2016, CleanCo has been on a mission to transform how Indian households and businesses approach hygiene. We believe that clean spaces create healthy lives — and we're here to make that effortless.
+      </p>
+      <p class="about-text reveal reveal-delay-2" id="aboutPara2">
+        From eco-friendly floor cleaners to professional-grade disinfectants, every product in our range is formulated with bio-degradable ingredients, rigorously tested, and certified safe for families, pets, and the environment.
+      </p>
+
+      <div class="about-mission reveal reveal-delay-3">
+        <div class="am-title">🎯 Our Mission</div>
+        <div class="am-text" id="aboutMission">To deliver premium, eco-friendly cleaning solutions that make a real difference — in homes, workplaces, and the world around us.</div>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRODUCTS ════════════════════════════════════════════════ -->
+<section id="products" class="section section-alt">
+  <div class="container-lg">
+    <div class="sec-header reveal">
+      <span class="sec-eyebrow">Our Range</span>
+      <h2 class="sec-title">Featured Products</h2>
+      <p class="sec-sub">Handpicked for quality and effectiveness</p>
+    </div>
+
+  <div class="products-filter reveal">
+  <button class="filter-pill active" data-cat="all" onclick="filterProducts('all',this)">All Products</button>
+  <button class="filter-pill" data-cat="home" onclick="filterProducts('home',this)">Home Cleaning</button>
+  <button class="filter-pill" data-cat="bathroom" onclick="filterProducts('bathroom',this)">Bathroom</button>
+  <button class="filter-pill" data-cat="kitchen" onclick="filterProducts('kitchen',this)">Kitchen</button>
+  <button class="filter-pill" data-cat="laundry" onclick="filterProducts('laundry',this)">Laundry</button>
+  <button class="filter-pill" data-cat="wellness" onclick="filterProducts('wellness',this)">Wellness</button>
+    </div>
+
+    <div id="productsHint" style="margin:1rem 0;font-size:.95rem;color:#556;padding:10px 12px;border-radius:8px;display:none;background:linear-gradient(180deg,#fff,#fbfbfb);border:1px solid #eee;">
+      <strong>No local products found.</strong> If you added products from the admin, make sure the admin and this page are served from the same origin (for example http://localhost:3000). <button id="openAdminBtn" style="margin-left:8px;padding:6px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer">Open Admin</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- ══ WHY CHOOSE US ══════════════════════════════════════════ -->
+<section id="why" class="section">
+    <div class="container">
+      <div class="sec-header sec-header-center reveal">
+        <span class="sec-eyebrow">Why CleanCo</span>
+        <h2 class="sec-title">Why Choose CleanCo</h2>
+        <p class="sec-sub">Trusted by 2 million households across India</p>
+      </div>
+
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="why-icon">🚚</div>
+        <div class="why-title">Fast Delivery</div>
+        <div class="why-desc">Same-day delivery available in all major metro cities. Orders placed before 2 PM are dispatched the same day.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-icon">🛡️</div>
+        <div class="why-title">Quality Assured</div>
+        <div class="why-desc">Every product is independently tested and certified. We stand by every bottle with our quality guarantee.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-icon">🌿</div>
+        <div class="why-title">Eco-Friendly</div>
+        <div class="why-desc">Biodegradable and sustainable formulas that protect your family and the environment simultaneously.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <div class="why-icon">↩️</div>
+        <div class="why-title">Easy Returns</div>
+        <div class="why-desc">7-day no-questions-asked returns policy. We make it simple to return or exchange any product you're not satisfied with.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-4">
+        <div class="why-icon">🎧</div>
+        <div class="why-title">24/7 Support</div>
+        <div class="why-desc">Our dedicated customer care team is available around the clock. Always here when you need us.</div>
+      </div>
+      <div class="why-card reveal reveal-delay-5">
+        <div class="why-icon">🏆</div>
+        <div class="why-title">Award Winning</div>
+        <div class="why-desc">Recognised for quality and innovation for 5 consecutive years. India's most trusted hygiene brand.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══════════════════════════════════════════════════ -->
+<section id="contact" class="section section-alt">
+  <div class="container">
+    <div class="sec-header sec-header-center reveal">
+      <span class="sec-eyebrow">Reach Us</span>
+      <h2 class="sec-title">Contact Us</h2>
+      <p class="sec-sub">Our team is ready to help with orders, enquiries, and bulk purchase requests.</p>
+    </div>
+
+    <div class="contact-info-row">
+      <div class="contact-info-card reveal">
+        <div class="ci-icon">📞</div>
+        <div class="ci-label">Phone</div>
+        <div class="ci-val">+91 98765 43210</div>
+        <div class="ci-sub">Mon–Sat: 9:00 AM – 7:00 PM</div>
+      </div>
+      <div class="contact-info-card reveal reveal-delay-1">
+        <div class="ci-icon">✉️</div>
+        <div class="ci-label">Email</div>
+        <div class="ci-val">hello@cleanco.com</div>
+        <div class="ci-sub">We respond within 24hrs</div>
+      </div>
+      <div class="contact-info-card reveal reveal-delay-2">
+        <div class="ci-icon">📍</div>
+        <div class="ci-label">Office</div>
+        <div class="ci-val">123 Clean Street</div>
+        <div class="ci-sub">Mumbai, Maharashtra, India 400001</div>
+      </div>
+      <div class="contact-info-card reveal reveal-delay-3">
+        <div class="ci-icon">🕐</div>
+        <div class="ci-label">Hours</div>
+        <div class="ci-val">Mon–Sat: 9:00 AM – 7:00 PM</div>
+        <div class="ci-sub">Sunday: Closed</div>
+      </div>
+    </div>
+
+    <div class="contact-form-wrap reveal">
+      <div class="cf-title">Send us a message</div>
+      <div class="cf-sub">Fill the form and our team will get back to you shortly.</div>
+      <form id="contactForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" placeholder="John Doe" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" placeholder="you@example.com" required/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Subject</label>
+            <input type="text" class="form-input" placeholder="How can we help?"/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Message</label>
+            <textarea class="form-textarea" placeholder="Tell us more…" required></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">Send Message →</button>
+        <div class="form-success" id="formSuccess">✅ Message sent! We'll get back to you within 24 hours.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-logo">
+        <div class="logo-icon">🌿</div>
+        <span>CleanCo</span>
+      </div>
+      <p class="footer-tagline">
+        India's premium cleaning & hygiene brand. Making homes and workplaces shine since 2016. Committed to quality, sustainability, and customer trust.
+      </p>
+      <div class="footer-socials">
+        <a class="footer-social-btn" href="#">f</a>
+        <a class="footer-social-btn" href="#">in</a>
+        <a class="footer-social-btn" href="#">tw</a>
+        <a class="footer-social-btn" href="#">yt</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Products</div>
+      <ul class="footer-links">
+        <li><a href="#products">Home Cleaning</a></li>
+        <li><a href="#products">Bathroom</a></li>
+        <li><a href="#products">Kitchen</a></li>
+        <li><a href="#products">Laundry</a></li>
+        <li><a href="#products">Industrial</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Get in Touch</div>
+      <div class="footer-contact-item">
+        <span class="fci-icon">📞</span>
+        <span class="fci-text">+91 98765 43210</span>
+      </div>
+      <div class="footer-contact-item">
+        <span class="fci-icon">✉️</span>
+        <span class="fci-text">support@cleanco.in</span>
+      </div>
+      <div class="footer-contact-item">
+        <span class="fci-icon">📍</span>
+        <span class="fci-text">Mumbai, Maharashtra, India</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 CleanCo Hygiene Pvt. Ltd. All rights reserved.</span>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ BACK TO TOP ════════════════════════════════════════════ -->
+<div id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- Debug indicator (visible in dev only) -->
+<div id="debugIndicator" style="position:fixed;left:12px;bottom:12px;background:#fff;border:1px solid #e6e6e6;padding:8px;border-radius:8px;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);z-index:2000;">Local products: 0</div>
+
+<!-- ══ JAVASCRIPT ══════════════════════════════════════════════ -->
+<script>
+/* ── PRODUCTS DATA ────────────────────────────────── */
+// Default built-in products (used only if localStorage doesn't provide products)
+const PRODUCTS = [
+  {
+    id:1, cat:'home', badge:'bestseller',
+    brand:'CleanCo Pro', name:'Multi-Surface Eco Spray',
+    desc:'Kills 99.9% of germs on all hard surfaces. Lemon-fresh, non-toxic formula.',
+    emoji:'🧴', bg:'#e8f8f0',
+    price:299, priceOld:449, rating:4.5, reviews:214
+  },
+  {
+    id:2, cat:'bathroom', badge:'new',
+    brand:'HygieneX', name:'Antibacterial Floor Cleaner',
+    desc:'Deep-cleans tiles and grout. Anti-bacterial with pine fragrance.',
+    emoji:'🫧', bg:'#e8f0ff',
+    price:199, priceOld:299, rating:4.5, reviews:214
+  },
+  {
+    id:3, cat:'wellness', badge:'top',
+    brand:'Sparkle+', name:'Premium Hand Sanitizer 500ml',
+    desc:'WHO-approved formula. 70% ethanol, aloe vera enriched, non-sticky.',
+    emoji:'🤲', bg:'#fff4e8',
+    price:149, priceOld:229, rating:4.5, reviews:214
+  },
+  {
+    id:4, cat:'kitchen', badge:'eco',
+    brand:'GreenClean', name:'Eco Dishwash Liquid 1L',
+    desc:'Plant-based formula removes grease 3x faster. Safe for baby bottles.',
+    emoji:'🍽️', bg:'#f0fff4',
+    price:189, priceOld:259, rating:4.5, reviews:214
+  },
+  {
+    id:5, cat:'bathroom', badge:'discount',
+    brand:'CleanCo Pro', name:'Bathroom Tile Cleaner 750ml',
+    desc:'Removes hard water stains and soap scum effortlessly. Streak-free finish.',
+    emoji:'🚿', bg:'#f5f0ff',
+    price:249, priceOld:349, rating:4.5, reviews:214
+  },
+  {
+    id:6, cat:'laundry', badge:'popular',
+    brand:'WashPro', name:'Laundry Detergent Powder 2kg',
+    desc:'Superior stain removal formula for top-load and front-load machines.',
+    emoji:'👕', bg:'#fffbe8',
+    price:349, priceOld:449, rating:4.5, reviews:214
+  },
+  {
+    id:7, cat:'kitchen', badge:'discount',
+    brand:'DefyGrit', name:'Kitchen Degreaser Spray',
+    desc:'Heavy-duty degreaser cuts through burnt grease and oil on all surfaces.',
+    emoji:'🍳', bg:'#fff0f0',
+    price:219, priceOld:309, rating:4.5, reviews:214
+  },
+  {
+    id:8, cat:'home', badge:'sale',
+    brand:'HygieneX', name:'Disinfectant Wipes 80ct',
+    desc:'Hospital-grade disinfecting wipes. Perfect for quick daily surface cleaning.',
+    emoji:'🧻', bg:'#e8fff4',
+    price:179, priceOld:249, rating:4.5, reviews:214
+  },
+  {
+    id:9, cat:'home', badge:null,
+    brand:'FuraAir', name:'Air Freshener Spray 300ml',
+    desc:'Long-lasting botanical fragrance. Eliminates odours in seconds.',
+    emoji:'🌸', bg:'#fff0f8',
+    price:159, priceOld:199, rating:4.4, reviews:189
+  },
+  {
+    id:10, cat:'home', badge:null,
+    brand:'GlassShine', name:'Glass Cleaner 500ml',
+    desc:'Streak-free formula for windows, mirrors and glass surfaces.',
+    emoji:'🪟', bg:'#e8f4ff',
+    price:129, priceOld:179, rating:4.3, reviews:156
+  },
+  {
+    id:11, cat:'home', badge:'new',
+    brand:'MopMagic', name:'Microfiber Mop Refill',
+    desc:'Ultra-absorbent microfiber pad. Machine washable up to 300 times.',
+    emoji:'🧹', bg:'#fdf4e8',
+    price:299, priceOld:399, rating:4.6, reviews:201
+  },
+  {
+    id:12, cat:'laundry', badge:null,
+    brand:'FabricSoft', name:'Fabric Conditioner 1L',
+    desc:'Hypoallergenic softener with jasmine scent. Gentle on sensitive skin.',
+    emoji:'🧺', bg:'#f4e8ff',
+    price:279, priceOld:349, rating:4.4, reviews:143
+  },
+  {
+    id:13, cat:'home', badge:'popular',
+    brand:'MasterKit', name:'Home Cleaning Bundle',
+    desc:'The ultimate starter kit — 6 essential cleaning products in one value pack.',
+    emoji:'📦', bg:'#e8faf0',
+    price:1299, priceOld:1899, rating:4.8, reviews:386
+  }
+];
+
+const BADGE_CONFIG = {
+  bestseller: { cls:'badge-bestseller', label:'Bestseller' },
+  new:        { cls:'badge-new',        label:'New' },
+  top:        { cls:'badge-top',        label:'Top Rated' },
+  eco:        { cls:'badge-eco',        label:'Eco' },
+  sale:       { cls:'badge-sale',       label:'Sale' },
+  popular:    { cls:'badge-popular',    label:'Popular' },
+  discount:   { cls:'badge-discount',   label:'−30%' },
+};
+
+function starsHTML(rating) {
+  const full = Math.floor(rating);
+  const half = rating - full >= .5;
+  let s = '★'.repeat(full);
+  if(half) s += '½';
+  return s;
+}
+
+function getStoredProducts() {
+  try {
+    const raw = localStorage.getItem('CLEANCOPRODUCTS');
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(!Array.isArray(parsed)) return null;
+    return parsed.map(p => ({
+      id: p.id || Date.now(),
+      cat: p.cat || 'home',
+      badge: p.badge || null,
+      brand: p.brand || 'Brand',
+      name: p.name || 'Unnamed Product',
+      desc: p.desc || '',
+      emoji: p.emoji || '📦',
+      bg: p.bg || (p.imgData ? `transparent` : '#fff'),
+      price: p.price || 0,
+      priceOld: p.priceOld || null,
+      rating: p.rating || 4.5,
+      reviews: p.reviews || 0,
+      imgData: p.imgData || null
+    }));
+  } catch (e) { return null; }
+}
+
+async function renderProducts(filter='all') {
+  const grid = document.getElementById('productsGrid');
+  // try server
+  try{
+    const res = await fetch('/api/products');
+    if(res.ok){
+      const serverList = await res.json();
+      const list = filter === 'all' ? serverList : serverList.filter(p => p.cat === filter);
+      grid.innerHTML = list.map((p, i) => {
+        const bc = p.badge ? BADGE_CONFIG[p.badge] : null;
+        const save = p.priceOld ? Math.round((1 - p.price/p.priceOld)*100) : 0;
+        return `
+    <div class="product-card reveal" style="transition-delay:${(i%4)*.08}s">
+      <div class="product-img" style="background:#F4F9F1; position:relative;">
+        ${p.img ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">` : (p.imgData ? `<img src="${p.imgData}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">` : `<span class="product-emoji">${p.emoji}</span>`) }
+        ${bc ? `<span class="product-badge ${bc.cls}">${bc.label}</span>` : ''}
+      </div>
+      <div class="product-body">
+        <div class="product-brand">${p.brand}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-stars">
+          <span class="stars">${starsHTML(p.rating)}</span>
+          <span class="review-count">(${p.reviews})</span>
+        </div>
+        <div class="product-pricing">
+          <span class="price-now">₹${p.price}</span>
+          ${p.priceOld ? `<span class="price-old">₹${p.priceOld}</span>` : ''}
+          ${save ? `<span class="price-save">−${save}%</span>` : ''}
+        </div>
+      </div>
+
+    </div>`;
+      }).join('');
+      setTimeout(observeReveal, 40);
+      updateDebug();
+      // hide hint when server returned products
+      const hint = document.getElementById('productsHint'); if(hint) hint.style.display = 'none';
+      return;
+    }
+  }catch(e){ console.warn('fetch /api/products failed, falling back to local', e); }
+
+  // fallback to local stored/products
+  const stored = getStoredProducts();
+  const source = stored && stored.length ? stored : PRODUCTS;
+  const list = filter === 'all' ? source : source.filter(p => p.cat === filter);
+
+  grid.innerHTML = list.map((p, i) => {
+    const bc = p.badge ? BADGE_CONFIG[p.badge] : null;
+    const save = p.priceOld ? Math.round((1 - p.price/p.priceOld)*100) : 0;
+    return `
+    <div class="product-card reveal" style="transition-delay:${(i%4)*.08}s">
+      <div class="product-img" style="background:${p.bg}; position:relative;">
+        ${p.imgData ? `<img src="${p.imgData}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">` : `<span class="product-emoji">${p.emoji}</span>`}
+        ${bc ? `<span class="product-badge ${bc.cls}">${bc.label}</span>` : ''}
+      </div>
+      <div class="product-body">
+        <div class="product-brand">${p.brand}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-stars">
+          <span class="stars">${starsHTML(p.rating)}</span>
+          <span class="review-count">(${p.reviews})</span>
+        </div>
+        <div class="product-pricing">
+          <span class="price-now">₹${p.price}</span>
+          ${p.priceOld ? `<span class="price-old">₹${p.priceOld}</span>` : ''}
+          ${save ? `<span class="price-save">−${save}%</span>` : ''}
+        </div>
+      </div>
+
+    </div>`;
+  }).join('');
+
+  setTimeout(observeReveal, 40);
+  updateDebug();
+  // show hint if using built-in PRODUCTS and no local products present
+  const storedRaw = localStorage.getItem('CLEANCOPRODUCTS');
+  const hint = document.getElementById('productsHint');
+  if(hint){
+    const hasLocal = storedRaw && JSON.parse(storedRaw).length;
+    hint.style.display = hasLocal ? 'none' : 'block';
+  }
+}
+
+function filterProducts(cat, btn) {
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat);
+}
+
+function enquireProduct(name) {
+  document.getElementById('contact').scrollIntoView({ behavior:'smooth' });
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('#contactForm .form-input');
+    inputs.forEach(inp => {
+      if(inp.placeholder === 'How can we help?') inp.value = `Enquiry about: ${name}`;
+    });
+  }, 700);
+}
+
+/* ── MARQUEE ─────────────────────────────────────── */
+(function() {
+  const items = ['100% Eco-Certified','2M+ Happy Customers','Same-Day Delivery','ISI Certified','Made in India','Family Safe Products'];
+  const track = document.getElementById('marqueeTrack');
+  const html = items.map(t => `<span class="marquee-item"><span class="marquee-dot"></span>${t}</span>`).join('');
+  track.innerHTML = html + html;
+})();
+
+/* ── SCROLL EFFECTS ──────────────────────────────── */
+function observeReveal() {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold:.1 });
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el => io.observe(el));
+}
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY > 40);
+  document.getElementById('btt').classList.toggle('show', scrollY > 500);
+  // update active nav link
+  const secs = ['hero','about','products','why','contact'];
+  let cur = 'hero';
+  secs.forEach(id => { if(scrollY >= (document.getElementById(id)?.offsetTop || 0) - 100) cur = id; });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+cur);
+  });
+});
+
+// Listen for localStorage changes so admin.html can update the site live
+window.addEventListener('storage', (e) => {
+  if(e.key === 'CLEANCOPRODUCTS' || e.key === 'CLEANC_SETTINGS' || !e.key) {
+    // re-render current filter (pick active filter pill or 'all')
+    const active = document.querySelector('.filter-pill.active');
+    const cat = active ? (((active.textContent || 'All Products').toLowerCase().includes('all')) ? 'all' : (active.getAttribute('data-cat') || 'all')) : 'all';
+    // If settings changed, re-apply them
+    if(e.key === 'CLEANC_SETTINGS') applySettings();
+    renderProducts(cat);
+  }
+});
+
+/* ── MOBILE MENU ─────────────────────────────────── */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileNav');
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+  document.body.style.overflow = mob.classList.contains('open') ? 'hidden' : '';
+});
+function closeMobile() { ham.classList.remove('open'); mob.classList.remove('open'); document.body.style.overflow = ''; }
+
+/* ── FORM ────────────────────────────────────────── */
+async function handleFormSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.btn-submit');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  const inputs = e.target.querySelectorAll('.form-input, .form-textarea');
+  const body = { name: inputs[0].value, email: inputs[1].value, subject: inputs[2].value, message: inputs[3].value };
+  try {
+    const res = await fetch('/api/contacts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error('Failed');
+  } catch(err) { console.warn('contact submit failed', err); }
+  document.getElementById('formSuccess').style.display = 'block';
+  btn.textContent = 'Message Sent ✓'; e.target.reset();
+}
+
+/* ── INIT ────────────────────────────────────────── */
+// Initial render — products will come from localStorage when available
+// Initial render — products will come from localStorage when available
+renderProducts();
+observeReveal();
+
+// Debug helper: show how many local products are stored (helps diagnose origin/localStorage issues)
+function updateDebug(){ try{ const raw = localStorage.getItem('CLEANCOPRODUCTS'); let n=0; if(raw){ const parsed = JSON.parse(raw); if(Array.isArray(parsed)) n = parsed.length; } const el = document.getElementById('debugIndicator'); if(el) el.textContent = 'Local products: '+n; }catch(e){ console.warn('updateDebug failed',e); } }
+updateDebug();
+
+// Apply settings from admin
+async function applySettings(){
+  let s = null;
+  try{
+    const res = await fetch('/api/settings');
+    if(res.ok) s = await res.json();
+  }catch(e){ console.warn('fetch settings failed',e); }
+  if(!s){
+    try{ const raw = localStorage.getItem('CLEANC_SETTINGS'); if(raw) s = JSON.parse(raw); }catch(e){}
+  }
+  if(!s) return;
+  try{
+    // About title
+    if(s.aboutTitle){
+      const el = document.getElementById('aboutTitle');
+      if(el) el.innerHTML = s.aboutTitle;
+    }
+    // About text paragraphs
+    if(s.aboutText){
+      const el = document.getElementById('aboutPara1');
+      if(el) el.textContent = s.aboutText;
+    }
+    if(s.aboutText2){
+      const el = document.getElementById('aboutPara2');
+      if(el) el.textContent = s.aboutText2;
+    }
+    // Mission
+    if(s.aboutMission){
+      const el = document.getElementById('aboutMission');
+      if(el) el.textContent = s.aboutMission;
+    }
+    // About image
+    if(s.aboutImgData || s.aboutImg){
+      const vis = document.querySelector('.about-visual');
+      if(vis){
+        let img = vis.querySelector('.about-custom-img');
+        if(!img){ img = document.createElement('img'); img.className='about-custom-img'; img.style.width='100%'; img.style.borderRadius='12px'; vis.querySelector('.about-img-main').appendChild(img); }
+        img.src = s.aboutImgData || s.aboutImg || '';
+      }
+    }
+    // Contact details
+    if(s.contact){
+      const c = s.contact;
+      const cards = document.querySelectorAll('.contact-info-card');
+      if(cards[0] && c.phone) cards[0].querySelector('.ci-val').textContent = c.phone;
+      if(cards[1] && c.email) cards[1].querySelector('.ci-val').textContent = c.email;
+      if(cards[2] && c.address) cards[2].querySelector('.ci-val').textContent = c.address;
+      const fci = document.querySelectorAll('.footer-contact-item .fci-text');
+      if(fci[0] && c.phone) fci[0].textContent = c.phone;
+      if(fci[1] && c.email) fci[1].textContent = c.email;
+      if(fci[2] && c.address) fci[2].textContent = c.address;
+    }
+  }catch(e){ console.warn('applySettings failed',e); }
+}
+
+// initial apply and listen for admin changes
+applySettings();
+window.addEventListener('storage',(e)=>{ if(e.key==='CLEANC_SETTINGS' || !e.key){ applySettings(); } if(e.key === 'CLEANCOPRODUCTS' || e.key === 'CLEANC_SETTINGS' || !e.key){ updateDebug(); } });
+
+// open admin helper
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('openAdminBtn');
+  if(btn) btn.addEventListener('click', ()=>{
+    const url = new URL(window.location.href);
+    // open admin.html on same origin/host
+    window.open(url.origin + '/admin.html', '_blank');
+  });
+});
+</script>
+</body>
+</html>
